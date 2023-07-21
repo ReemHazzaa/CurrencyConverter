@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/convertCurrencyFragment"
-        android:name="com.reem.currencyconverter.app.features.convertCurrency.ConvertCurrencyFragment"
+        android:name="com.reem.currencyconverter.app.ui.convertCurrency.ConvertCurrencyFragment"
         android:label="fragment_convert_currency"
         tools:layout="@layout/fragment_convert_currency" />
 </navigation>

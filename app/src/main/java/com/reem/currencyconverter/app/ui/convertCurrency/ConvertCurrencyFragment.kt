@@ -1,4 +1,4 @@
-package com.reem.currencyconverter.app.features.convertCurrency
+package com.reem.currencyconverter.app.ui.convertCurrency
 
 import android.os.Bundle
 import android.view.LayoutInflater
