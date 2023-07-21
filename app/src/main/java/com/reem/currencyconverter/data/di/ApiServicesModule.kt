@@ -1,4 +1,4 @@
-package com.reem.currencyconverter.app.di
+package com.reem.currencyconverter.data.di
 
 import com.reem.currencyconverter.data.remote.apiService.FixerApiService
 import com.reem.currencyconverter.data.remote.networkLayer.client.FixerClient
