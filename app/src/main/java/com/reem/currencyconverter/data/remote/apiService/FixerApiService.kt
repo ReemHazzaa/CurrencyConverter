@@ -4,7 +4,7 @@ import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 
-interface CurrencyConverterApiService {
+interface FixerApiService {
 
     @GET("symbols")
     suspend fun getSymbols(): Response<SymbolsResponse>
