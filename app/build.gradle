@@ -19,6 +19,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "FIXER_API_BASE_URL", getProperty("app.base.url.fixer.api")
+        buildConfigField "String", "API_KEY", getProperty("fixer.api.key")
     }
 
     buildTypes {
