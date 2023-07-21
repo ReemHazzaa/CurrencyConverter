@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/app_navigation">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_navigation"
+    app:startDestination="@id/convertCurrencyFragment">
 
+    <fragment
+        android:id="@+id/convertCurrencyFragment"
+        android:name="com.reem.currencyconverter.app.features.convertCurrency.ConvertCurrencyFragment"
+        android:label="fragment_convert_currency"
+        tools:layout="@layout/fragment_convert_currency" />
 </navigation>
