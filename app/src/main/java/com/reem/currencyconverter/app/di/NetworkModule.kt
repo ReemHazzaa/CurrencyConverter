@@ -18,6 +18,42 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Singleton
+    @Provides
+    fun provideRetrofitBuilder(
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit.Builder {
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .addConverterFactory(gsonConverterFactory)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGsonConverterFactory(): GsonConverterFactory {
+        return GsonConverterFactory.create()
+    }
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(
+        okHttpLoggingInterceptor: HttpLoggingInterceptor,
+        requestInterceptor: RequestInterceptor,
+        headerInterceptor: HeaderInterceptor,
+        errorInterceptor: ErrorInterceptor,
+    ): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+            .addInterceptor(headerInterceptor)
+            .addInterceptor(requestInterceptor)
+            .addInterceptor(errorInterceptor)
+            .addInterceptor(okHttpLoggingInterceptor)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+        return builder.build()
+    }
+
     @Singleton
     @Provides
     fun provideOkHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -27,31 +63,16 @@ object NetworkModule {
                 else HttpLoggingInterceptor.Level.NONE
         }
     }
-
     @Singleton
     @Provides
-    fun provideOkHttpClient(
-        okHttpLoggingInterceptor: HttpLoggingInterceptor,
-        headerInterceptor: HeaderInterceptor,
-    ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-            .addInterceptor(headerInterceptor)
-            .addInterceptor(RequestInterceptor())
-            .addInterceptor(ErrorInterceptor())
-            .addInterceptor(okHttpLoggingInterceptor)
-            .connectTimeout(20, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-        return builder.build()
+    fun provideRequestInterceptor(): RequestInterceptor {
+        return RequestInterceptor()
     }
 
     @Singleton
     @Provides
-    fun provideRetrofitBuilder(
-        okHttpClient: OkHttpClient
-    ): Retrofit.Builder {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+    fun provideErrorInterceptor(): ErrorInterceptor {
+        return ErrorInterceptor()
     }
 
 }

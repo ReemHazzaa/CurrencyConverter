@@ -12,7 +12,7 @@ class RequestInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val ogRequest = chain.request()
-        val ogHttpUrl = ogRequest.url()
+        val ogHttpUrl = ogRequest.url
 
         val url = ogHttpUrl.newBuilder()
             .addQueryParameter("access_key", BuildConfig.API_KEY)
