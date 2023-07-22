@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkResult
+import com.reem.currencyconverter.domain.entity.symbols.Symbols
 import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
 import com.reem.currencyconverter.domain.useCase.symbolsUseCase.GetSymbolsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ class ConvertCurrencyViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     var symbolsResponse: MutableLiveData<NetworkResult<SymbolsResponse>> = MutableLiveData()
+    var symbolsLiveData: MutableLiveData<Symbols> = MutableLiveData()
 
     fun getSymbols() = viewModelScope.launch {
         getSymbolsSafeCall()
@@ -55,7 +57,7 @@ class ConvertCurrencyViewModel @Inject constructor(
             }
 
             response.code() == 200 && response.body()?.success == true -> {
-                NetworkResult.Success(response.body())
+                return NetworkResult.Success(response.body())
             }
 
             else -> NetworkResult.Error(response.message().toString())
