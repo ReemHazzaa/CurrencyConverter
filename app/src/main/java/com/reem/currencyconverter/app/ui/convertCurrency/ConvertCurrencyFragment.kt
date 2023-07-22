@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.reem.currencyconverter.app.extensions.makeInVisible
 import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
+import com.reem.currencyconverter.data.mapper.convertCurrency
 import com.reem.currencyconverter.data.mapper.mapSymbolsObjectToStringList
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkResult
 import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
@@ -37,12 +39,49 @@ class ConvertCurrencyFragment : Fragment() {
         }
         showLoading()
         getSymbols()
+
+
         return view
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun convertFromBaseToTargetCurrency(
+        fromCurrency: String,
+        toCurrency: String,
+        fromAmount: String,
+        fromEditText: EditText,
+        toEditText: EditText
+    ) {
+        viewModel.getRates(fromCurrency, toCurrency)
+        viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is NetworkResult.Success -> {
+                    hideLoading()
+                    response.data?.rates?.let {
+                        val toConvertedValue = convertCurrency(fromAmount, it)
+                        updateEditText(toConvertedValue, toEditText)
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    context?.showGeneralDialog(
+                        title = getString(com.reem.currencyconverter.R.string.error),
+                        description = response.message.toString(),
+                        onClickListener = null
+                    )
+                }
+
+                is NetworkResult.Loading -> showLoading()
+            }
+        }
+    }
+
+    private fun updateEditText(value: String, editText: EditText) {
+        editText.setText(value)
     }
 
     private fun getSymbols() {
