@@ -6,4 +6,26 @@
     <string name="_1">1</string>
     <string name="xxxx">xxxx</string>
     <string name="details">Details</string>
+    <string name="no_internet_connection">No internet connection!</string>
+    <string name="request_is_not_successful">Request is not successful.</string>
+    <!-- API Error codes -->
+    <string name="api_error_404">The requested resource does not exist.</string>
+    <string name="api_error_101">No API Key was specified or an invalid API Key was specified.</string>
+    <string name="api_error_103">The requested API endpoint does not exist.</string>
+    <string name="api_error_104">The maximum allowed API amount of monthly API requests has been reached.</string>
+    <string name="api_error_105">The current subscription plan does not support this API endpoint.</string>
+    <string name="api_error_106">The current request did not return any results.</string>
+    <string name="api_error_102">The account this API request is coming from is inactive.</string>
+    <string name="api_error_201">An invalid base currency has been entered.</string>
+    <string name="api_error_202">One or more invalid symbols have been specified.</string>
+    <string name="api_error_301">No date has been specified.</string>
+    <string name="api_error_302">An invalid date has been specified.</string>
+    <string name="api_error_403">No or an invalid amount has been specified.</string>
+    <string name="api_error_501">No or an invalid timeframe has been specified.</string>
+    <string name="api_error_502">No or an invalid start date has been specified.</string>
+    <string name="api_error_503">No or an invalid end date has been specified.</string>
+    <string name="api_error_504">An invalid timeframe has been specified.</string>
+    <string name="api_error_505">The specified timeframe is too long, exceeding 365 days.</string>
+    <string name="unknown_error">Unknown error.\n</string>
+    <string name="unidentified_error">Unidentified error</string>
 </resources>
