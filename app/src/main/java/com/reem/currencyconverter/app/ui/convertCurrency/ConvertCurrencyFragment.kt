@@ -1,6 +1,5 @@
 package com.reem.currencyconverter.app.ui.convertCurrency
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +28,13 @@ class ConvertCurrencyFragment : Fragment() {
     ): View {
         _binding = FragmentConvertCurrencyBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.swipeRefresh.apply {
+            setOnRefreshListener {
+                isRefreshing = true
+                getSymbols()
+                isRefreshing = false
+            }
+        }
         showLoading()
         getSymbols()
         return view
@@ -69,19 +75,19 @@ class ConvertCurrencyFragment : Fragment() {
     private fun populateSpinnersWithSymbols(strings: MutableList<String>?) {
         ArrayAdapter(
             binding.spinnerFrom.context,
-            R.layout.simple_spinner_item,
+            android.R.layout.simple_spinner_item,
             strings!!.toTypedArray()
         ).also { spinnerAdapter ->
-            spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerFrom.adapter = spinnerAdapter
         }
 
         ArrayAdapter(
             binding.spinnerTo.context,
-            R.layout.simple_spinner_item,
+            android.R.layout.simple_spinner_item,
             strings.toTypedArray()
         ).also { spinnerAdapter ->
-            spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerTo.adapter = spinnerAdapter
         }
     }
