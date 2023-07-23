@@ -1,6 +1,7 @@
 package com.reem.currencyconverter.data.repo
 
 import com.reem.currencyconverter.data.remote.apiService.FixerApiService
+import com.reem.currencyconverter.domain.entity.historicalData.HistoricalDataResponse
 import com.reem.currencyconverter.domain.entity.rates.RatesResponse
 import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
 import com.reem.currencyconverter.domain.repo.AppRepo
@@ -20,5 +21,13 @@ class AppRepoImpl @Inject constructor(
         commaSeparatedSymbols: String
     ): Response<RatesResponse> {
         return fixerApiService.getRates(base, commaSeparatedSymbols)
+    }
+
+    override suspend fun getHistoricalData(
+        base: String,
+        symbol: String,
+        date: String
+    ): Response<HistoricalDataResponse> {
+        return fixerApiService.getHistoricalData(date, base, symbol)
     }
 }
