@@ -59,6 +59,10 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun initUI() {
         binding.apply {
 
+            ivSwap.setOnClickListener {
+                swapFromAndToFields()
+            }
+
             spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
             spinnerTo.onItemSelectedListener = this@ConvertCurrencyFragment
 
@@ -71,12 +75,10 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 
             etFrom.afterTextChanged {
-                Log.e("REEM", it)
                 convertFromBaseToTargetCurrency(
                     fromCurrency = selectedFromSymbol,
                     toCurrency = selectedToSymbol,
                     fromAmount = it,
-                    fromEditText = binding.etFrom,
                     toEditText = binding.etTo
                 )
             }
@@ -84,6 +86,15 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 //            etTo.afterTextChanged {
 //
 //            }
+        }
+    }
+
+    private fun swapFromAndToFields() {
+        val from = binding.etFrom.text.toString()
+        val to = binding.etTo.text.toString()
+        binding.apply {
+            etFrom.setText(to)
+            etTo.setText(from)
         }
     }
 
@@ -142,13 +153,12 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     selectedFromSymbol = binding.spinnerFrom.selectedItem.toString()
                     if (selectedToSymbol.isBlank()) selectedToSymbol =
                         binding.spinnerTo.selectedItem.toString()
-//                    convertFromBaseToTargetCurrency(
-//                        fromCurrency = selectedFromSymbol,
-//                        toCurrency = selectedToSymbol,
-//                        fromAmount = binding.etFrom.text.toString(),
-//                        toEditText = binding.etTo,
-//                        fromEditText = binding.etFrom
-//                    )
+                    convertFromBaseToTargetCurrency(
+                        fromCurrency = selectedFromSymbol,
+                        toCurrency = selectedToSymbol,
+                        fromAmount = binding.etFrom.text.toString(),
+                        toEditText = binding.etTo,
+                    )
                 }
             }
 
@@ -157,13 +167,12 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     selectedToSymbol = binding.spinnerTo.selectedItem.toString()
                     if (selectedFromSymbol.isBlank()) selectedFromSymbol =
                         binding.spinnerFrom.selectedItem.toString()
-//                    convertFromBaseToTargetCurrency(
-//                        fromCurrency = selectedFromSymbol,
-//                        toCurrency = selectedToSymbol,
-//                        fromAmount = binding.etFrom.text.toString(),
-//                        toEditText = binding.etTo,
-//                        fromEditText = binding.etFrom
-//                    )
+                    convertFromBaseToTargetCurrency(
+                        fromCurrency = selectedFromSymbol,
+                        toCurrency = selectedToSymbol,
+                        fromAmount = binding.etFrom.text.toString(),
+                        toEditText = binding.etTo,
+                    )
                 }
             }
 
@@ -177,7 +186,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         fromCurrency: String,
         toCurrency: String,
         fromAmount: String,
-        fromEditText: EditText,
         toEditText: EditText
     ) {
         viewModel.getRates(fromCurrency, toCurrency)
