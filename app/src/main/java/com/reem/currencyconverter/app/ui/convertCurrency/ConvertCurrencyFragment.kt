@@ -1,13 +1,13 @@
 package com.reem.currencyconverter.app.ui.convertCurrency
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.reem.currencyconverter.R
@@ -83,6 +83,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 )
             }
 
+            //TODO: Reverse conversion, Issue -> infinite looping
 //            etTo.afterTextChanged {
 //
 //            }
@@ -92,9 +93,17 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun swapFromAndToFields() {
         val from = binding.etFrom.text.toString()
         val to = binding.etTo.text.toString()
-        binding.apply {
-            etFrom.setText(to)
-            etTo.setText(from)
+        if (from.isBlank() || to.isBlank()) {
+            Toast.makeText(
+                this.requireContext(),
+                getString(R.string.from_to_fields_must_not_be_empty_for_swapping),
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            binding.apply {
+                etFrom.setText(to)
+                etTo.setText(from)
+            }
         }
     }
 

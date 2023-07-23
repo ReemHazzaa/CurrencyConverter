@@ -12,4 +12,5 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="error">Error</string>
+    <string name="from_to_fields_must_not_be_empty_for_swapping"><![CDATA[From & To fields must not be empty for swapping.]]></string>
 </resources>
