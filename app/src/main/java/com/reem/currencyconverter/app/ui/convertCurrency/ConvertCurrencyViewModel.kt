@@ -60,6 +60,7 @@ class ConvertCurrencyViewModel @Inject constructor(
             response.code() == 200 && response.body()?.success == false -> {
                 NetworkResult.Error(
                     response.body()?.error?.info
+                        ?: response.body()?.error?.type?.replace("_", " ")
                         ?: application.getString(R.string.unidentified_error)
                 )
             }
@@ -102,6 +103,7 @@ class ConvertCurrencyViewModel @Inject constructor(
             response.code() == 200 && response.body()?.success == false -> {
                 NetworkResult.Error(
                     response.body()?.error?.info
+                        ?: response.body()?.error?.type?.replace("_", " ")
                         ?: application.getString(R.string.unidentified_error)
                 )
             }

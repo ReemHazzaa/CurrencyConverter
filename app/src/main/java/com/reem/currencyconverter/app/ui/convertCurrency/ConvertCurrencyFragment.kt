@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.reem.currencyconverter.R
 import com.reem.currencyconverter.app.extensions.makeInVisible
 import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
@@ -18,18 +20,27 @@ import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ConvertCurrencyFragment : Fragment() {
+class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentConvertCurrencyBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: ConvertCurrencyViewModel by viewModels()
+
+    private var selectedFromSymbol: String = ""
+    private var selectedToSymbol: String = ""
+
+    // Flags to stop automatic call of onSelectedItemListener on start
+    private var checkSpinnerFrom: Int = 0
+    private var checkSpinnerTo: Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConvertCurrencyBinding.inflate(inflater, container, false)
         val view = binding.root
+        initUI()
         binding.swipeRefresh.apply {
             setOnRefreshListener {
                 isRefreshing = true
@@ -40,8 +51,13 @@ class ConvertCurrencyFragment : Fragment() {
         showLoading()
         getSymbols()
 
-
         return view
+    }
+
+    private fun initUI() {
+        binding.apply {
+            etFrom.setText("1")
+        }
     }
 
     override fun onDestroy() {
@@ -68,6 +84,7 @@ class ConvertCurrencyFragment : Fragment() {
                 }
 
                 is NetworkResult.Error -> {
+                    hideLoading()
                     context?.showGeneralDialog(
                         title = getString(com.reem.currencyconverter.R.string.error),
                         description = response.message.toString(),
@@ -129,19 +146,61 @@ class ConvertCurrencyFragment : Fragment() {
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerTo.adapter = spinnerAdapter
         }
+
+        binding.apply {
+            spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
+            spinnerTo.onItemSelectedListener = this@ConvertCurrencyFragment
+        }
     }
 
     private fun showLoading() {
         binding.apply {
-            clMain.makeInVisible()
             progressBar.makeVisible()
         }
     }
 
     private fun hideLoading() {
         binding.apply {
-            clMain.makeVisible()
             progressBar.makeInVisible()
         }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+        when (parent?.id) {
+            R.id.spinnerFrom -> {
+                if (++checkSpinnerFrom > 1) {
+                    selectedFromSymbol = binding.spinnerFrom.selectedItem.toString()
+                    if (selectedToSymbol.isBlank()) selectedToSymbol =
+                        binding.spinnerTo.selectedItem.toString()
+                    convertFromBaseToTargetCurrency(
+                        fromCurrency = selectedFromSymbol,
+                        toCurrency = selectedToSymbol,
+                        fromAmount = binding.etFrom.text.toString(),
+                        toEditText = binding.etTo,
+                        fromEditText = binding.etFrom
+                    )
+                }
+            }
+
+            R.id.spinnerTo -> {
+                if (++checkSpinnerTo > 1) {
+                    selectedToSymbol = binding.spinnerTo.selectedItem.toString()
+                    if (selectedFromSymbol.isBlank()) selectedFromSymbol =
+                        binding.spinnerFrom.selectedItem.toString()
+                    convertFromBaseToTargetCurrency(
+                        fromCurrency = selectedFromSymbol,
+                        toCurrency = selectedToSymbol,
+                        fromAmount = binding.etFrom.text.toString(),
+                        toEditText = binding.etTo,
+                        fromEditText = binding.etFrom
+                    )
+                }
+            }
+
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
     }
 }
