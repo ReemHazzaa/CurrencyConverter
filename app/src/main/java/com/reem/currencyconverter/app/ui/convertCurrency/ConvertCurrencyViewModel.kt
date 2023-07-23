@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
-import com.reem.currencyconverter.data.remote.networkLayer.NetworkResult
+import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.domain.entity.rates.RatesResponse
 import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
 import com.reem.currencyconverter.domain.useCase.ratesUseCase.GetRatesUseCase
@@ -24,15 +24,15 @@ class ConvertCurrencyViewModel @Inject constructor(
     private val application: Application
 ) : AndroidViewModel(application) {
 
-    var symbolsResponse: MutableLiveData<NetworkResult<SymbolsResponse>> = MutableLiveData()
-    var ratesResponse: MutableLiveData<NetworkResult<RatesResponse>> = MutableLiveData()
+    var symbolsResponse: MutableLiveData<UiState<SymbolsResponse>> = MutableLiveData()
+    var ratesResponse: MutableLiveData<UiState<RatesResponse>> = MutableLiveData()
 
     fun getRates(from: String, to: String) = viewModelScope.launch {
         getRatesSafeCall(from, to)
     }
 
     private suspend fun getRatesSafeCall(from: String, to: String) {
-        ratesResponse.value = NetworkResult.Loading()
+        ratesResponse.value = UiState.Loading()
         if (networkManager.isNetworkAvailable()) {
             try {
                 val response = getRatesUseCase.execute(
@@ -43,22 +43,22 @@ class ConvertCurrencyViewModel @Inject constructor(
                 )
                 ratesResponse.value = handleRatesResponse(response)
             } catch (e: Exception) {
-                ratesResponse.value = NetworkResult.Error(e.message.toString())
+                ratesResponse.value = UiState.Error(e.message.toString())
             }
         } else {
             ratesResponse.value =
-                NetworkResult.Error(application.getString(R.string.no_internet_connection))
+                UiState.Error(application.getString(R.string.no_internet_connection))
         }
     }
 
-    private fun handleRatesResponse(response: Response<RatesResponse>): NetworkResult<RatesResponse>? {
+    private fun handleRatesResponse(response: Response<RatesResponse>): UiState<RatesResponse>? {
         return when {
-            !response.isSuccessful -> NetworkResult.Error(application.getString(R.string.request_is_not_successful))
+            !response.isSuccessful -> UiState.Error(application.getString(R.string.request_is_not_successful))
 
-            response.code() != 200 -> NetworkResult.Error(application.getString(R.string.request_is_not_successful))
+            response.code() != 200 -> UiState.Error(application.getString(R.string.request_is_not_successful))
 
             response.code() == 200 && response.body()?.success == false -> {
-                NetworkResult.Error(
+                UiState.Error(
                     response.body()?.error?.info
                         ?: response.body()?.error?.type?.replace("_", " ")
                         ?: application.getString(R.string.unidentified_error)
@@ -66,10 +66,10 @@ class ConvertCurrencyViewModel @Inject constructor(
             }
 
             response.code() == 200 && response.body()?.success == true -> {
-                return NetworkResult.Success(response.body())
+                return UiState.Success(response.body())
             }
 
-            else -> NetworkResult.Error(response.message().toString())
+            else -> UiState.Error(response.message().toString())
         }
     }
 
@@ -78,30 +78,30 @@ class ConvertCurrencyViewModel @Inject constructor(
     }
 
     private suspend fun getSymbolsSafeCall() {
-        symbolsResponse.value = NetworkResult.Loading()
+        symbolsResponse.value = UiState.Loading()
         if (networkManager.isNetworkAvailable()) {
             try {
                 val response = getSymbolsUseCase.execute()
                 symbolsResponse.value = handleSymbolsResponse(response)
             } catch (e: Exception) {
-                symbolsResponse.value = NetworkResult.Error(e.message.toString())
+                symbolsResponse.value = UiState.Error(e.message.toString())
             }
         } else {
             symbolsResponse.value =
-                NetworkResult.Error(application.getString(R.string.no_internet_connection))
+                UiState.Error(application.getString(R.string.no_internet_connection))
         }
 
     }
 
     private fun handleSymbolsResponse(response: Response<SymbolsResponse>)
-            : NetworkResult<SymbolsResponse> {
+            : UiState<SymbolsResponse> {
         return when {
-            !response.isSuccessful -> NetworkResult.Error(application.getString(R.string.request_is_not_successful))
+            !response.isSuccessful -> UiState.Error(application.getString(R.string.request_is_not_successful))
 
-            response.code() != 200 -> NetworkResult.Error(application.getString(R.string.request_is_not_successful))
+            response.code() != 200 -> UiState.Error(application.getString(R.string.request_is_not_successful))
 
             response.code() == 200 && response.body()?.success == false -> {
-                NetworkResult.Error(
+                UiState.Error(
                     response.body()?.error?.info
                         ?: response.body()?.error?.type?.replace("_", " ")
                         ?: application.getString(R.string.unidentified_error)
@@ -109,10 +109,10 @@ class ConvertCurrencyViewModel @Inject constructor(
             }
 
             response.code() == 200 && response.body()?.success == true -> {
-                return NetworkResult.Success(response.body())
+                return UiState.Success(response.body())
             }
 
-            else -> NetworkResult.Error(response.message().toString())
+            else -> UiState.Error(response.message().toString())
         }
     }
 

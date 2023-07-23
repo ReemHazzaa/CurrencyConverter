@@ -18,7 +18,7 @@ import com.reem.currencyconverter.app.extensions.showGeneralDialog
 import com.reem.currencyconverter.app.extensions.toast
 import com.reem.currencyconverter.data.mapper.convertCurrency
 import com.reem.currencyconverter.data.mapper.mapSymbolsObjectToStringList
-import com.reem.currencyconverter.data.remote.networkLayer.NetworkResult
+import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -139,7 +139,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel.getSymbols()
         viewModel.symbolsResponse.observe(viewLifecycleOwner) { response ->
             when (response) {
-                is NetworkResult.Success -> {
+                is UiState.Success -> {
                     hideLoading()
                     response.data?.symbols?.let {
                         mapSymbolsObjectToStringList(it)
@@ -148,7 +148,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     }
                 }
 
-                is NetworkResult.Error -> {
+                is UiState.Error -> {
                     hideLoading()
                     context?.showGeneralDialog(
                         title = getString(R.string.error),
@@ -157,7 +157,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     )
                 }
 
-                is NetworkResult.Loading -> showLoading()
+                is UiState.Loading -> showLoading()
             }
         }
     }
@@ -231,7 +231,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             viewModel.getRates(fromCurrency, toCurrency)
             viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
                 when (response) {
-                    is NetworkResult.Success -> {
+                    is UiState.Success -> {
                         hideLoading()
                         response.data?.rates?.let {
                             val toConvertedValue = convertCurrency(fromAmount, it)
@@ -239,7 +239,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         }
                     }
 
-                    is NetworkResult.Error -> {
+                    is UiState.Error -> {
                         hideLoading()
                         context?.showGeneralDialog(
                             title = getString(com.reem.currencyconverter.R.string.error),
@@ -248,7 +248,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         )
                     }
 
-                    is NetworkResult.Loading -> showLoading()
+                    is UiState.Loading -> showLoading()
                 }
             }
         }
