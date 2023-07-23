@@ -6,8 +6,8 @@ import com.reem.currencyconverter.domain.useCase.baseUseCase.BaseUseCase
 import retrofit2.Response
 import javax.inject.Inject
 
-class GetHistoricalDataUseCase @Inject constructor(private val appRepo: AppRepo) :
-    BaseUseCase<GetHistoricalDataUseCase.Params, Response<HistoricalDataResponse>>() {
+class GetHistoricalUseCase @Inject constructor(private val appRepo: AppRepo) :
+    BaseUseCase<GetHistoricalUseCase.Params, Response<HistoricalDataResponse>>() {
 
     data class Params(
         val date: String,

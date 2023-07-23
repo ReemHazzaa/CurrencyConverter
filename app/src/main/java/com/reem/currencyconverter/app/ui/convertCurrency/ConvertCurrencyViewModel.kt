@@ -46,8 +46,7 @@ class ConvertCurrencyViewModel @Inject constructor(
                 ratesResponse.value = UiState.Error(e.message.toString())
             }
         } else {
-            ratesResponse.value =
-                UiState.Error(application.getString(R.string.no_internet_connection))
+            ratesResponse.value = UiState.Error(application.getString(R.string.no_internet_connection))
         }
     }
 
