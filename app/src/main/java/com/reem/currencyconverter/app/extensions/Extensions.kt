@@ -44,7 +44,9 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit): TextWatcher {
         }
 
         override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
+            var s = editable.toString()
+            if (s.isBlank()) s = "1"
+            afterTextChanged.invoke(s)
         }
     }
 

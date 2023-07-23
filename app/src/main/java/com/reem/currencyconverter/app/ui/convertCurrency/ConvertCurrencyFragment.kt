@@ -1,6 +1,7 @@
 package com.reem.currencyconverter.app.ui.convertCurrency
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +29,8 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private val viewModel: ConvertCurrencyViewModel by viewModels()
 
-    private var selectedFromSymbol: String = ""
-    private var selectedToSymbol: String = ""
+    private var selectedFromSymbol: String = "AED"
+    private var selectedToSymbol: String = "AED"
 
 
     // Flags to stop automatic call of onSelectedItemListener on start
@@ -57,8 +58,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun initUI() {
         binding.apply {
-            etFrom.setText(getString(R.string._1))
-            etTo.setText(getString(R.string.xxxx))
 
             spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
             spinnerTo.onItemSelectedListener = this@ConvertCurrencyFragment
@@ -72,6 +71,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 
             etFrom.afterTextChanged {
+                Log.e("REEM", it)
                 convertFromBaseToTargetCurrency(
                     fromCurrency = selectedFromSymbol,
                     toCurrency = selectedToSymbol,
@@ -81,9 +81,9 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 )
             }
 
-            etTo.afterTextChanged {
-
-            }
+//            etTo.afterTextChanged {
+//
+//            }
         }
     }
 
@@ -103,7 +103,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 is NetworkResult.Error -> {
                     hideLoading()
                     context?.showGeneralDialog(
-                        title = getString(com.reem.currencyconverter.R.string.error),
+                        title = getString(R.string.error),
                         description = response.message.toString(),
                         onClickListener = null
                     )
@@ -142,13 +142,13 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     selectedFromSymbol = binding.spinnerFrom.selectedItem.toString()
                     if (selectedToSymbol.isBlank()) selectedToSymbol =
                         binding.spinnerTo.selectedItem.toString()
-                    convertFromBaseToTargetCurrency(
-                        fromCurrency = selectedFromSymbol,
-                        toCurrency = selectedToSymbol,
-                        fromAmount = binding.etFrom.text.toString(),
-                        toEditText = binding.etTo,
-                        fromEditText = binding.etFrom
-                    )
+//                    convertFromBaseToTargetCurrency(
+//                        fromCurrency = selectedFromSymbol,
+//                        toCurrency = selectedToSymbol,
+//                        fromAmount = binding.etFrom.text.toString(),
+//                        toEditText = binding.etTo,
+//                        fromEditText = binding.etFrom
+//                    )
                 }
             }
 
@@ -157,13 +157,13 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     selectedToSymbol = binding.spinnerTo.selectedItem.toString()
                     if (selectedFromSymbol.isBlank()) selectedFromSymbol =
                         binding.spinnerFrom.selectedItem.toString()
-                    convertFromBaseToTargetCurrency(
-                        fromCurrency = selectedFromSymbol,
-                        toCurrency = selectedToSymbol,
-                        fromAmount = binding.etFrom.text.toString(),
-                        toEditText = binding.etTo,
-                        fromEditText = binding.etFrom
-                    )
+//                    convertFromBaseToTargetCurrency(
+//                        fromCurrency = selectedFromSymbol,
+//                        toCurrency = selectedToSymbol,
+//                        fromAmount = binding.etFrom.text.toString(),
+//                        toEditText = binding.etTo,
+//                        fromEditText = binding.etFrom
+//                    )
                 }
             }
 

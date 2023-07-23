@@ -13,7 +13,8 @@ fun mapSymbolsObjectToStringList(symbols: Symbols): MutableList<String> {
 }
 
 fun convertCurrency(fromAmount: String?, rates: Rates): String {
-    val targetRate = getConversionRateValue(rates)
+    var targetRate = getConversionRateValue(rates)
+    if (targetRate.isBlank()) targetRate = "AED"
     return (fromAmount?.toDouble()
         ?.times(targetRate.toDouble()) ?: 0.0).toString()
 
