@@ -24,7 +24,7 @@ class HistoricalDataFragment : Fragment() {
         _binding = FragmentHistoricalDataBinding.inflate(inflater, container, false)
         val view = binding.root
 
-//        viewModel.performNetworkCallsConcurrently(listOf("2022-07-20", "2022-07-21", "2022-07-22"), "EUR", "EGP")
+        viewModel.performNetworkCallsConcurrently(listOf("2022-07-20", "2022-07-21", "2022-07-22"), "EUR", "EGP")
 
         return view
     }
