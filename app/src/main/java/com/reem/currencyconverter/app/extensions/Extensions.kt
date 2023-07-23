@@ -35,9 +35,8 @@ fun Context.showGeneralDialog(
         .show()
 }
 
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-
-    this.addTextChangedListener(object : TextWatcher {
+fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit): TextWatcher {
+    val watcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
 
@@ -47,6 +46,8 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun afterTextChanged(editable: Editable?) {
             afterTextChanged.invoke(editable.toString())
         }
-    })
+    }
 
+    this.addTextChangedListener(watcher)
+    return watcher
 }
