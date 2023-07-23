@@ -2,7 +2,10 @@ package com.reem.currencyconverter.app.extensions
 
 import android.content.Context
 import android.content.DialogInterface
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.EditText
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 fun View.makeVisible() {
@@ -30,4 +33,20 @@ fun Context.showGeneralDialog(
         ) { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
         .setCancelable(cancelable)
         .show()
+}
+
+fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+
+    this.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            afterTextChanged.invoke(editable.toString())
+        }
+    })
+
 }

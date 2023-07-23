@@ -2,7 +2,7 @@
     <string name="app_name">CurrencyConverter</string>
 
     <string name="all_you_need_for_currency_conversion">All you need for currency conversion</string>
-    <string name="_1">1</string>
+    <string name="_1">1.0</string>
     <string name="xxxx">xxxx</string>
     <string name="details">Details</string>
     <string name="no_internet_connection">No internet connection!</string>

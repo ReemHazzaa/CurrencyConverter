@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.reem.currencyconverter.R
+import com.reem.currencyconverter.app.extensions.afterTextChanged
 import com.reem.currencyconverter.app.extensions.makeInVisible
 import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
@@ -30,6 +31,9 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var selectedFromSymbol: String = ""
     private var selectedToSymbol: String = ""
 
+    private var etFromValue: String = ""
+    private var etToValue: String = ""
+
     // Flags to stop automatic call of onSelectedItemListener on start
     private var checkSpinnerFrom: Int = 0
     private var checkSpinnerTo: Int = 0
@@ -41,23 +45,11 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = FragmentConvertCurrencyBinding.inflate(inflater, container, false)
         val view = binding.root
         initUI()
-        binding.swipeRefresh.apply {
-            setOnRefreshListener {
-                isRefreshing = true
-                getSymbols()
-                isRefreshing = false
-            }
-        }
+
         showLoading()
         getSymbols()
 
         return view
-    }
-
-    private fun initUI() {
-        binding.apply {
-            etFrom.setText("1")
-        }
     }
 
     override fun onDestroy() {
@@ -65,40 +57,42 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    private fun convertFromBaseToTargetCurrency(
-        fromCurrency: String,
-        toCurrency: String,
-        fromAmount: String,
-        fromEditText: EditText,
-        toEditText: EditText
-    ) {
-        viewModel.getRates(fromCurrency, toCurrency)
-        viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is NetworkResult.Success -> {
-                    hideLoading()
-                    response.data?.rates?.let {
-                        val toConvertedValue = convertCurrency(fromAmount, it)
-                        updateEditText(toConvertedValue, toEditText)
-                    }
-                }
+    private fun initUI() {
+        binding.apply {
+            etFrom.setText(getString(R.string._1))
+            etTo.setText(getString(R.string.xxxx))
 
-                is NetworkResult.Error -> {
-                    hideLoading()
-                    context?.showGeneralDialog(
-                        title = getString(com.reem.currencyconverter.R.string.error),
-                        description = response.message.toString(),
-                        onClickListener = null
-                    )
-                }
+            etFromValue = etFrom.text.toString()
+            etToValue = etTo.text.toString()
 
-                is NetworkResult.Loading -> showLoading()
+            spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
+            spinnerTo.onItemSelectedListener = this@ConvertCurrencyFragment
+
+            swipeRefresh.apply {
+                setOnRefreshListener {
+                    isRefreshing = true
+                    getSymbols()
+                    isRefreshing = false
+                }
+            }
+
+            etFrom.afterTextChanged {
+                etFromValue = it
+                convertFromBaseToTargetCurrency(
+                    fromCurrency = selectedFromSymbol,
+                    toCurrency = selectedToSymbol,
+                    fromAmount = it,
+                    fromEditText = binding.etFrom,
+                    toEditText = binding.etTo
+                )
             }
         }
     }
 
-    private fun updateEditText(value: String, editText: EditText) {
-        editText.setText(value)
+    private fun calculateFromValueAccordingToChangedToValue(newToValue: String): Double {
+        val fromOldValue = etFromValue.toDouble()
+        val toOldValue = etToValue.toDouble()
+        return ((newToValue.toDouble()) * fromOldValue) / toOldValue
     }
 
     private fun getSymbols() {
@@ -146,23 +140,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.spinnerTo.adapter = spinnerAdapter
         }
-
-        binding.apply {
-            spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
-            spinnerTo.onItemSelectedListener = this@ConvertCurrencyFragment
-        }
-    }
-
-    private fun showLoading() {
-        binding.apply {
-            progressBar.makeVisible()
-        }
-    }
-
-    private fun hideLoading() {
-        binding.apply {
-            progressBar.makeInVisible()
-        }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -202,5 +179,53 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    private fun convertFromBaseToTargetCurrency(
+        fromCurrency: String,
+        toCurrency: String,
+        fromAmount: String,
+        fromEditText: EditText,
+        toEditText: EditText
+    ) {
+        viewModel.getRates(fromCurrency, toCurrency)
+        viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is NetworkResult.Success -> {
+                    hideLoading()
+                    response.data?.rates?.let {
+                        val toConvertedValue = convertCurrency(fromAmount, it)
+                        updateEditText(toConvertedValue, toEditText)
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    hideLoading()
+                    context?.showGeneralDialog(
+                        title = getString(com.reem.currencyconverter.R.string.error),
+                        description = response.message.toString(),
+                        onClickListener = null
+                    )
+                }
+
+                is NetworkResult.Loading -> showLoading()
+            }
+        }
+    }
+
+    private fun updateEditText(value: String, editText: EditText) {
+        editText.setText(value)
+    }
+
+    private fun showLoading() {
+        binding.apply {
+            progressBar.makeVisible()
+        }
+    }
+
+    private fun hideLoading() {
+        binding.apply {
+            progressBar.makeInVisible()
+        }
     }
 }
