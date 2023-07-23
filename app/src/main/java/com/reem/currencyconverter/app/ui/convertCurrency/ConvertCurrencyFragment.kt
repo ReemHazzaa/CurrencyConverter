@@ -60,7 +60,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun initUI() {
         binding.apply {
-
             ivSwap.setOnClickListener {
 //                swapFromAndToFields()
                 swapFromAndToSpinners()
@@ -76,21 +75,24 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     isRefreshing = false
                 }
             }
+        }
+        setTextWatchers()
+    }
 
-            etFrom.afterTextChanged {
-                convertFromBaseToTargetCurrency(
-                    fromCurrency = selectedFromSymbol,
-                    toCurrency = selectedToSymbol,
-                    fromAmount = it,
-                    toEditText = binding.etTo
-                )
-            }
+    private fun setTextWatchers() {
+        binding.etFrom.afterTextChanged {
+            convertFromBaseToTargetCurrency(
+                fromCurrency = selectedFromSymbol,
+                toCurrency = selectedToSymbol,
+                fromAmount = it,
+                toEditText = binding.etTo
+            )
+        }
 
-            //TODO: Reverse conversion, Issue -> infinite looping
+        //TODO: Reverse conversion, Issue -> infinite looping
 //            etTo.afterTextChanged {
 //
 //            }
-        }
     }
 
     private fun swapFromAndToFields() {
@@ -173,7 +175,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
         when (parent?.id) {
             R.id.spinnerFrom -> {
                 if (++checkSpinnerFrom > 1) {
@@ -198,7 +199,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         convertFromBaseToTargetCurrency(
                             fromCurrency = selectedFromSymbol,
                             toCurrency = selectedToSymbol,
-                            fromAmount = binding.etFrom.text.toString(),
+                            fromAmount = binding.etFrom.text.toString().ifBlank { "1" },
                             toEditText = binding.etTo,
                         )
                         isSwapping = false
@@ -218,27 +219,29 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         fromAmount: String,
         toEditText: EditText
     ) {
-        viewModel.getRates(fromCurrency, toCurrency)
-        viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is NetworkResult.Success -> {
-                    hideLoading()
-                    response.data?.rates?.let {
-                        val toConvertedValue = convertCurrency(fromAmount, it)
-                        updateEditText(toConvertedValue, toEditText)
+        if (fromAmount.isNotBlank()) {
+            viewModel.getRates(fromCurrency, toCurrency)
+            viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
+                when (response) {
+                    is NetworkResult.Success -> {
+                        hideLoading()
+                        response.data?.rates?.let {
+                            val toConvertedValue = convertCurrency(fromAmount, it)
+                            updateEditText(toConvertedValue, toEditText)
+                        }
                     }
-                }
 
-                is NetworkResult.Error -> {
-                    hideLoading()
-                    context?.showGeneralDialog(
-                        title = getString(com.reem.currencyconverter.R.string.error),
-                        description = response.message.toString(),
-                        onClickListener = null
-                    )
-                }
+                    is NetworkResult.Error -> {
+                        hideLoading()
+                        context?.showGeneralDialog(
+                            title = getString(com.reem.currencyconverter.R.string.error),
+                            description = response.message.toString(),
+                            onClickListener = null
+                        )
+                    }
 
-                is NetworkResult.Loading -> showLoading()
+                    is NetworkResult.Loading -> showLoading()
+                }
             }
         }
     }
