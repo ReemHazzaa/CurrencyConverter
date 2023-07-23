@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.reem.currencyconverter.R
@@ -15,6 +14,7 @@ import com.reem.currencyconverter.app.extensions.afterTextChanged
 import com.reem.currencyconverter.app.extensions.makeInVisible
 import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
+import com.reem.currencyconverter.app.extensions.toast
 import com.reem.currencyconverter.data.mapper.convertCurrency
 import com.reem.currencyconverter.data.mapper.mapSymbolsObjectToStringList
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkResult
@@ -23,7 +23,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
-
+    private var isSwapping: Boolean = false
+    private lateinit var spinnerToAdapter: ArrayAdapter<String>
+    private lateinit var spinnerFromAdapter: ArrayAdapter<String>
     private var _binding: FragmentConvertCurrencyBinding? = null
     private val binding get() = _binding!!
 
@@ -60,7 +62,8 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.apply {
 
             ivSwap.setOnClickListener {
-                swapFromAndToFields()
+//                swapFromAndToFields()
+                swapFromAndToSpinners()
             }
 
             spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
@@ -94,15 +97,30 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val from = binding.etFrom.text.toString()
         val to = binding.etTo.text.toString()
         if (from.isBlank() || to.isBlank()) {
-            Toast.makeText(
-                this.requireContext(),
-                getString(R.string.from_to_fields_must_not_be_empty_for_swapping),
-                Toast.LENGTH_SHORT
-            ).show()
+            this.requireActivity()
+                .toast(getString(R.string.from_to_fields_must_not_be_empty_for_swapping))
         } else {
             binding.apply {
                 etFrom.setText(to)
                 etTo.setText(from)
+            }
+        }
+    }
+
+    private fun swapFromAndToSpinners() {
+        if (selectedFromSymbol == selectedToSymbol) {
+            this.requireActivity().toast(getString(R.string.same_symbols))
+        } else if (selectedFromSymbol.isBlank() || selectedToSymbol.isBlank()) {
+            this.requireActivity()
+                .toast(getString(R.string.please_select_a_base_and_a_target_currency))
+        } else {
+            isSwapping = true
+            binding.apply {
+                spinnerTo.setSelection(spinnerFromAdapter.getPosition(selectedFromSymbol), true)
+                spinnerFrom.setSelection(spinnerToAdapter.getPosition(selectedToSymbol), true)
+
+                selectedFromSymbol = spinnerFrom.selectedItem.toString()
+                selectedToSymbol = spinnerTo.selectedItem.toString()
             }
         }
     }
@@ -135,7 +153,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun populateSpinnersWithSymbols(strings: MutableList<String>?) {
-        ArrayAdapter(
+        spinnerFromAdapter = ArrayAdapter(
             binding.spinnerFrom.context,
             android.R.layout.simple_spinner_item,
             strings!!.toTypedArray()
@@ -144,7 +162,7 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             binding.spinnerFrom.adapter = spinnerAdapter
         }
 
-        ArrayAdapter(
+        spinnerToAdapter = ArrayAdapter(
             binding.spinnerTo.context,
             android.R.layout.simple_spinner_item,
             strings.toTypedArray()
@@ -173,15 +191,18 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
             R.id.spinnerTo -> {
                 if (++checkSpinnerTo > 1) {
-                    selectedToSymbol = binding.spinnerTo.selectedItem.toString()
-                    if (selectedFromSymbol.isBlank()) selectedFromSymbol =
-                        binding.spinnerFrom.selectedItem.toString()
-                    convertFromBaseToTargetCurrency(
-                        fromCurrency = selectedFromSymbol,
-                        toCurrency = selectedToSymbol,
-                        fromAmount = binding.etFrom.text.toString(),
-                        toEditText = binding.etTo,
-                    )
+                    if (!isSwapping) {
+                        selectedToSymbol = binding.spinnerTo.selectedItem.toString()
+                        if (selectedFromSymbol.isBlank()) selectedFromSymbol =
+                            binding.spinnerFrom.selectedItem.toString()
+                        convertFromBaseToTargetCurrency(
+                            fromCurrency = selectedFromSymbol,
+                            toCurrency = selectedToSymbol,
+                            fromAmount = binding.etFrom.text.toString(),
+                            toEditText = binding.etTo,
+                        )
+                        isSwapping = false
+                    }
                 }
             }
 

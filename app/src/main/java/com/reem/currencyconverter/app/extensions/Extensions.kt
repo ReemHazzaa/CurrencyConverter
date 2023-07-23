@@ -6,7 +6,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.reem.currencyconverter.R
 
 fun View.makeVisible() {
     this.visibility = View.VISIBLE
@@ -52,4 +54,12 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit): TextWatcher {
 
     this.addTextChangedListener(watcher)
     return watcher
+}
+
+fun Context.toast(message: String) {
+    Toast.makeText(
+        this,
+        message,
+        Toast.LENGTH_SHORT
+    ).show()
 }

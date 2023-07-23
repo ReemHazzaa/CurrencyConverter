@@ -13,4 +13,6 @@
     <string name="to">To</string>
     <string name="error">Error</string>
     <string name="from_to_fields_must_not_be_empty_for_swapping"><![CDATA[From & To fields must not be empty for swapping.]]></string>
+    <string name="same_symbols">No need to swap since Base and Target currencies are the same</string>
+    <string name="please_select_a_base_and_a_target_currency">Please select a base and a target currency</string>
 </resources>
