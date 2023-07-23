@@ -63,3 +63,7 @@ fun Context.toast(message: String) {
         Toast.LENGTH_SHORT
     ).show()
 }
+
+fun EditText.updateText(value: String) {
+    this.setText(value)
+}

@@ -19,14 +19,22 @@ import com.reem.currencyconverter.app.extensions.toast
 import com.reem.currencyconverter.data.mapper.convertCurrency
 import com.reem.currencyconverter.data.mapper.mapSymbolsObjectToStringList
 import com.reem.currencyconverter.app.base.UiState
+import com.reem.currencyconverter.app.extensions.updateText
 import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
+    /**
+     * This flag is set to true while Swapping to stop selectedItemListener
+     * on spinnerTo Since we only need the listener on spinnerFrom to
+     * work in this case.
+     */
     private var isSwapping: Boolean = false
+
     private lateinit var spinnerToAdapter: ArrayAdapter<String>
     private lateinit var spinnerFromAdapter: ArrayAdapter<String>
+
     private var _binding: FragmentConvertCurrencyBinding? = null
     private val binding get() = _binding!!
 
@@ -235,14 +243,14 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         hideLoading()
                         response.data?.rates?.let {
                             val toConvertedValue = convertCurrency(fromAmount, it)
-                            updateEditText(toConvertedValue, toEditText)
+                            toEditText.updateText(toConvertedValue)
                         }
                     }
 
                     is UiState.Error -> {
                         hideLoading()
                         context?.showGeneralDialog(
-                            title = getString(com.reem.currencyconverter.R.string.error),
+                            title = getString(R.string.error),
                             description = response.message.toString(),
                             onClickListener = null
                         )
@@ -252,10 +260,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
-    }
-
-    private fun updateEditText(value: String, editText: EditText) {
-        editText.setText(value)
     }
 
     private fun showLoading() {
