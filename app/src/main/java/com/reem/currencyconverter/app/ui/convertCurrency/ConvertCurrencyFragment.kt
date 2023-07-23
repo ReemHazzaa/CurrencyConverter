@@ -31,8 +31,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var selectedFromSymbol: String = ""
     private var selectedToSymbol: String = ""
 
-    private var etFromValue: String = ""
-    private var etToValue: String = ""
 
     // Flags to stop automatic call of onSelectedItemListener on start
     private var checkSpinnerFrom: Int = 0
@@ -62,9 +60,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             etFrom.setText(getString(R.string._1))
             etTo.setText(getString(R.string.xxxx))
 
-            etFromValue = etFrom.text.toString()
-            etToValue = etTo.text.toString()
-
             spinnerFrom.onItemSelectedListener = this@ConvertCurrencyFragment
             spinnerTo.onItemSelectedListener = this@ConvertCurrencyFragment
 
@@ -77,7 +72,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             }
 
             etFrom.afterTextChanged {
-                etFromValue = it
                 convertFromBaseToTargetCurrency(
                     fromCurrency = selectedFromSymbol,
                     toCurrency = selectedToSymbol,
@@ -86,13 +80,11 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     toEditText = binding.etTo
                 )
             }
-        }
-    }
 
-    private fun calculateFromValueAccordingToChangedToValue(newToValue: String): Double {
-        val fromOldValue = etFromValue.toDouble()
-        val toOldValue = etToValue.toDouble()
-        return ((newToValue.toDouble()) * fromOldValue) / toOldValue
+            etTo.afterTextChanged {
+
+            }
+        }
     }
 
     private fun getSymbols() {
