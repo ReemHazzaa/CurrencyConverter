@@ -9,5 +9,20 @@
         android:id="@+id/convertCurrencyFragment"
         android:name="com.reem.currencyconverter.app.ui.convertCurrency.ConvertCurrencyFragment"
         android:label="fragment_convert_currency"
-        tools:layout="@layout/fragment_convert_currency" />
+        tools:layout="@layout/fragment_convert_currency" >
+        <action
+            android:id="@+id/action_convertCurrencyFragment_to_historicalDataFragment"
+            app:destination="@id/historicalDataFragment" />
+        <argument
+            android:name="fromSymbol"
+            app:argType="string" />
+        <argument
+            android:name="toSymbol"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/historicalDataFragment"
+        android:name="com.reem.currencyconverter.app.ui.historicalData.HistoricalDataFragment"
+        android:label="fragment_historical_data"
+        tools:layout="@layout/fragment_historical_data" />
 </navigation>

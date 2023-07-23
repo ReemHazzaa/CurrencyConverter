@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.app.extensions.afterTextChanged
 import com.reem.currencyconverter.app.extensions.makeInVisible
@@ -60,6 +61,13 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun initUI() {
         binding.apply {
+            buttonDetails.setOnClickListener {
+                val from = spinnerFrom.selectedItem.toString()
+                val to = spinnerTo.selectedItem.toString()
+                val action = ConvertCurrencyFragmentDirections.actionConvertCurrencyFragmentToHistoricalDataFragment()
+                findNavController().navigate(action)
+            }
+
             ivSwap.setOnClickListener {
 //                swapFromAndToFields()
                 swapFromAndToSpinners()
