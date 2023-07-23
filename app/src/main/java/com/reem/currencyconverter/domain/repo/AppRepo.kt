@@ -1,5 +1,6 @@
 package com.reem.currencyconverter.domain.repo
 
+import com.reem.currencyconverter.domain.entity.historicalData.HistoricalDataResponse
 import com.reem.currencyconverter.domain.entity.rates.RatesResponse
 import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
 import retrofit2.Response
@@ -11,4 +12,10 @@ interface AppRepo {
         base: String,
         commaSeparatedSymbols: String
     ): Response<RatesResponse>
+
+    suspend fun getHistoricalData(
+        base: String,
+        symbol: String,
+        date: String
+    ): Response<HistoricalDataResponse>
 }
