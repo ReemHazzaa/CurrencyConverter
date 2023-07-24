@@ -10,11 +10,13 @@ import androidx.navigation.fragment.navArgs
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.app.adapters.historicalData.HistoricalDataAdapter
+import com.reem.currencyconverter.app.adapters.otherCurrencies.OtherCurrenciesAdapter
 import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.app.extensions.makeInVisible
 import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
 import com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI
+import com.reem.currencyconverter.app.models.historicalData.RateUiItem
 import com.reem.currencyconverter.app.utils.getLast3daysDates
 import com.reem.currencyconverter.data.mappers.getConversionRateValue
 import com.reem.currencyconverter.databinding.FragmentHistoricalDataBinding
@@ -31,6 +33,10 @@ class HistoricalDataFragment : Fragment() {
     private val historicalDataAdapter: HistoricalDataAdapter by lazy {
         HistoricalDataAdapter()
     }
+    private val otherCurrencies = "USD,EUR,RUB,GBP,INR,JPY,MYR,EGP,AED,CNY"
+    private val otherCurrenciesAdapter: OtherCurrenciesAdapter by lazy {
+        OtherCurrenciesAdapter()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +48,7 @@ class HistoricalDataFragment : Fragment() {
         initUI()
 
         showLoading()
-        loadData(getLast3daysDates(), args.fromSymbol, args.toSymbol)
+        loadData(getLast3daysDates(), args.fromSymbol, args.toSymbol, otherCurrencies)
 
 
         return view
@@ -53,8 +59,13 @@ class HistoricalDataFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadData(datesList: List<String>, from: String, to: String) {
-        viewModel.performNetworkCallsConcurrently(datesList, from, to)
+    private fun loadData(
+        datesList: List<String>,
+        from: String,
+        to: String,
+        otherCurrencies: String
+    ) {
+        viewModel.performNetworkCallsConcurrently(datesList, from, to, otherCurrencies)
         viewModel.historicalUI.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is UiState.Loading -> showLoading()
@@ -62,6 +73,9 @@ class HistoricalDataFragment : Fragment() {
                     hideLoading()
                     populateHistoricalDataRV(response.data?.listOfHistoricalData)
                     populateChart(response.data?.listOfHistoricalData)
+                    if (response.data?.otherCurrencies?.isNotEmpty() == true) {
+                        populateCurrenciesRV(response.data.otherCurrencies)
+                    }
                 }
 
                 is UiState.Error -> {
@@ -74,6 +88,11 @@ class HistoricalDataFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun populateCurrenciesRV(otherCurrencies: List<RateUiItem>) {
+        otherCurrenciesAdapter.setData(otherCurrencies)
+        binding.rvOtherCurrencies.adapter = otherCurrenciesAdapter
     }
 
     private fun populateHistoricalDataRV(list: List<HistoricalDayUI>?) {
@@ -103,7 +122,7 @@ class HistoricalDataFragment : Fragment() {
             }
             swipeRefresh.setOnRefreshListener {
                 swipeRefresh.isRefreshing = true
-                loadData(getLast3daysDates(), args.fromSymbol, args.toSymbol)
+                loadData(getLast3daysDates(), args.fromSymbol, args.toSymbol, otherCurrencies)
                 swipeRefresh.isRefreshing = false
             }
         }

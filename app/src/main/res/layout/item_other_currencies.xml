@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI" />
+            type="com.reem.currencyconverter.app.models.historicalData.RateUiItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,24 +17,24 @@
 
         <TextView
             android:id="@+id/tv_symbol_name"
-            setHistoricalDateToTextView="@{item.date}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingHorizontal="5dp"
             android:paddingTop="5dp"
+            android:text="@{item.name}"
             android:textColor="@color/purple"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="AUG 20, 2022" />
+            tools:text="EUR" />
 
         <TextView
             android:id="@+id/tv_rate"
-            setRateToTextView="@{item.rates}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{item.value}"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"

@@ -20,4 +20,5 @@
     <string name="eur_egp"><![CDATA[EUR -> EGP]]></string>
     <string name="last_3_days_of_exchange_rates">Last 3 days of exchange rates</string>
     <string name="historical_data">Historical Data</string>
+    <string name="other_10_popular_currencies">Other 10 popular currencies</string>
 </resources>
