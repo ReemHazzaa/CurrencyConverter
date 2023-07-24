@@ -68,7 +68,6 @@ fun mapHistoricalApiResponsesToUI(
         third?.rates?.let { HistoricalDayUI(third.date ?: "N/A", third.base ?: "N/A", it) }
     val currencies = other?.rates?.let { convertRatesObjectToUiList(it) }
 
-
     return HistoricalDataUI(
         listOfHistoricalData = listOf(firstDay!!, secondDay!!, thirdDay!!),
         otherCurrencies = currencies ?: emptyList()

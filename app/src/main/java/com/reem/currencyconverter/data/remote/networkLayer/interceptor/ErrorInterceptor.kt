@@ -19,7 +19,7 @@ class ErrorInterceptor : Interceptor {
             return response
         } catch (e: Exception) {
             if (e is NetworkFailure.ServerError)
-                throw  e
+                throw e
             else
                 throw NetworkFailure.NetworkError
         }
