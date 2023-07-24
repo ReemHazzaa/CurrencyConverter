@@ -1,4 +1,4 @@
-package com.reem.currencyconverter.domain.entity.apiError
+package com.reem.currencyconverter.domain.models.apiError
 
 data class FixerApiError(
     val code: Int?,

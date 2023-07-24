@@ -1,6 +1,6 @@
 package com.reem.currencyconverter.domain.useCase.historicalData
 
-import com.reem.currencyconverter.domain.entity.historicalData.HistoricalDataResponse
+import com.reem.currencyconverter.domain.models.historicalData.HistoricalDataResponse
 import com.reem.currencyconverter.domain.repo.AppRepo
 import com.reem.currencyconverter.domain.useCase.baseUseCase.BaseUseCase
 import retrofit2.Response

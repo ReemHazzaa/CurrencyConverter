@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.app.base.UiState
-import com.reem.currencyconverter.domain.entity.rates.RatesResponse
-import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
+import com.reem.currencyconverter.domain.models.rates.RatesResponse
+import com.reem.currencyconverter.domain.models.symbols.SymbolsResponse
 import com.reem.currencyconverter.domain.useCase.ratesUseCase.GetRatesUseCase
 import com.reem.currencyconverter.domain.useCase.symbolsUseCase.GetSymbolsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

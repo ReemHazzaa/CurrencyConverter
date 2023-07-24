@@ -1,4 +1,4 @@
-package com.reem.currencyconverter.domain.entity.symbols
+package com.reem.currencyconverter.domain.models.symbols
 
 data class Symbols(
     val AED: String,

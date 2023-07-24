@@ -1,6 +1,6 @@
 package com.reem.currencyconverter.domain.useCase.symbolsUseCase
 
-import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
+import com.reem.currencyconverter.domain.models.symbols.SymbolsResponse
 import com.reem.currencyconverter.domain.repo.AppRepo
 import com.reem.currencyconverter.domain.useCase.baseUseCase.BaseUseCase
 import retrofit2.Response

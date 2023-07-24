@@ -1,16 +1,15 @@
 package com.reem.currencyconverter.app.ui.historicalData
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.app.base.UiState
-import com.reem.currencyconverter.app.entity.HistoricalDataUI
-import com.reem.currencyconverter.data.mapper.mapHistoricalApiResponsesToUI
+import com.reem.currencyconverter.app.models.historicalData.HistoricalDataUI
+import com.reem.currencyconverter.data.mappers.mapHistoricalApiResponsesToUI
 import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
-import com.reem.currencyconverter.domain.entity.historicalData.HistoricalDataResponse
+import com.reem.currencyconverter.domain.models.historicalData.HistoricalDataResponse
 import com.reem.currencyconverter.domain.useCase.historicalData.GetHistoricalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -102,7 +101,7 @@ class HistoricalDataViewModel @Inject constructor(
                     secondDayValue,
                     thirdDayValue
                 )
-                
+
                 return UiState.Success(uiResult)
             }
 

@@ -1,6 +1,6 @@
 package com.reem.currencyconverter.domain.useCase.ratesUseCase
 
-import com.reem.currencyconverter.domain.entity.rates.RatesResponse
+import com.reem.currencyconverter.domain.models.rates.RatesResponse
 import com.reem.currencyconverter.domain.repo.AppRepo
 import com.reem.currencyconverter.domain.useCase.baseUseCase.BaseUseCase
 import retrofit2.Response

@@ -1,8 +1,8 @@
 package com.reem.currencyconverter.domain.repo
 
-import com.reem.currencyconverter.domain.entity.historicalData.HistoricalDataResponse
-import com.reem.currencyconverter.domain.entity.rates.RatesResponse
-import com.reem.currencyconverter.domain.entity.symbols.SymbolsResponse
+import com.reem.currencyconverter.domain.models.historicalData.HistoricalDataResponse
+import com.reem.currencyconverter.domain.models.rates.RatesResponse
+import com.reem.currencyconverter.domain.models.symbols.SymbolsResponse
 import retrofit2.Response
 
 interface AppRepo {

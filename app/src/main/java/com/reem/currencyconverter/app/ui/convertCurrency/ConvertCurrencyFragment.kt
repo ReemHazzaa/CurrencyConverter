@@ -11,15 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.reem.currencyconverter.R
+import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.app.extensions.afterTextChanged
 import com.reem.currencyconverter.app.extensions.makeInVisible
 import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
 import com.reem.currencyconverter.app.extensions.toast
-import com.reem.currencyconverter.data.mapper.convertCurrency
-import com.reem.currencyconverter.data.mapper.mapSymbolsObjectToStringList
-import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.app.extensions.updateText
+import com.reem.currencyconverter.data.mappers.convertCurrency
+import com.reem.currencyconverter.data.mappers.mapSymbolsObjectToStringList
 import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -72,7 +72,11 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
             buttonDetails.setOnClickListener {
                 val from = spinnerFrom.selectedItem.toString()
                 val to = spinnerTo.selectedItem.toString()
-                val action = ConvertCurrencyFragmentDirections.actionConvertCurrencyFragmentToHistoricalDataFragment()
+                val action =
+                    ConvertCurrencyFragmentDirections.actionConvertCurrencyFragmentToHistoricalDataFragment(
+                        fromSymbol = from,
+                        toSymbol = to
+                    )
                 findNavController().navigate(action)
             }
 

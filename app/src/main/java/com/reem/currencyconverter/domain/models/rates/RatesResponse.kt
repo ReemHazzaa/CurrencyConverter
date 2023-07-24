@@ -1,6 +1,6 @@
-package com.reem.currencyconverter.domain.entity.rates
+package com.reem.currencyconverter.domain.models.rates
 
-import com.reem.currencyconverter.domain.entity.apiError.FixerApiError
+import com.reem.currencyconverter.domain.models.apiError.FixerApiError
 
 data class RatesResponse(
     val base: String?,

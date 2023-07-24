@@ -1,11 +1,11 @@
-package com.reem.currencyconverter.data.mapper
+package com.reem.currencyconverter.data.mappers
 
 import com.google.gson.Gson
-import com.reem.currencyconverter.app.entity.HistoricalDataUI
-import com.reem.currencyconverter.app.entity.HistoricalDayUI
-import com.reem.currencyconverter.domain.entity.historicalData.HistoricalDataResponse
-import com.reem.currencyconverter.domain.entity.rates.Rates
-import com.reem.currencyconverter.domain.entity.symbols.Symbols
+import com.reem.currencyconverter.app.models.historicalData.HistoricalDataUI
+import com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI
+import com.reem.currencyconverter.domain.models.historicalData.HistoricalDataResponse
+import com.reem.currencyconverter.domain.models.rates.Rates
+import com.reem.currencyconverter.domain.models.symbols.Symbols
 import retrofit2.Response
 
 fun mapSymbolsObjectToStringList(symbols: Symbols): MutableList<String> {
@@ -24,7 +24,7 @@ fun convertCurrency(fromAmount: String?, rates: Rates): String {
 
 }
 
-private fun getConversionRateValue(rates: Rates): String {
+fun getConversionRateValue(rates: Rates): String {
     val gson = Gson()
     var ratesJson = gson.toJson(rates, Rates::class.java)
     ratesJson = ratesJson.toString().substringAfter(":")

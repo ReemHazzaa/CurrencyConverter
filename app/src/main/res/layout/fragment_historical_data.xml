@@ -22,13 +22,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/rect_curved"
-                android:backgroundTint="@color/blue"
+                android:backgroundTint="@color/purple"
                 android:paddingVertical="15dp"
                 android:paddingStart="70dp"
                 android:paddingEnd="20dp"
                 android:text="@string/eur_egp"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +38,7 @@
                 android:id="@+id/imageView"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="15dp"
                 android:src="@drawable/exchange_rate"
                 app:layout_constraintBottom_toBottomOf="@id/tv_header"
                 app:layout_constraintStart_toStartOf="@id/tv_header"
@@ -67,7 +67,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/last_3_days_of_exchange_rates"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@id/guideline2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +87,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_historical_list"
                 tools:listitem="@layout/item_historical_data" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

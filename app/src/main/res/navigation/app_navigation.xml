@@ -13,16 +13,19 @@
         <action
             android:id="@+id/action_convertCurrencyFragment_to_historicalDataFragment"
             app:destination="@id/historicalDataFragment" />
-        <argument
-            android:name="fromSymbol"
-            app:argType="string" />
-        <argument
-            android:name="toSymbol"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/historicalDataFragment"
         android:name="com.reem.currencyconverter.app.ui.historicalData.HistoricalDataFragment"
         android:label="fragment_historical_data"
-        tools:layout="@layout/fragment_historical_data" />
+        tools:layout="@layout/fragment_historical_data" >
+        <argument
+            android:name="fromSymbol"
+            app:argType="string"
+            android:defaultValue="AED" />
+        <argument
+            android:name="toSymbol"
+            app:argType="string"
+            android:defaultValue="AED" />
+    </fragment>
 </navigation>

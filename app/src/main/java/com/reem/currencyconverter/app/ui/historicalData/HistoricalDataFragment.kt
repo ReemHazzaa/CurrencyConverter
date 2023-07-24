@@ -6,8 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.reem.currencyconverter.R
-import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
+import com.reem.currencyconverter.app.adapters.historicalData.HistoricalDataAdapter
+import com.reem.currencyconverter.app.base.UiState
+import com.reem.currencyconverter.app.extensions.makeInVisible
+import com.reem.currencyconverter.app.extensions.makeVisible
+import com.reem.currencyconverter.app.extensions.showGeneralDialog
+import com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI
+import com.reem.currencyconverter.app.utils.getLast3daysDates
 import com.reem.currencyconverter.databinding.FragmentHistoricalDataBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,6 +24,12 @@ class HistoricalDataFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: HistoricalDataViewModel by viewModels()
 
+    private val args: HistoricalDataFragmentArgs by navArgs()
+
+    private val historicalDataAdapter: HistoricalDataAdapter by lazy {
+        HistoricalDataAdapter()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,7 +37,11 @@ class HistoricalDataFragment : Fragment() {
         _binding = FragmentHistoricalDataBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        viewModel.performNetworkCallsConcurrently(listOf("2022-07-20", "2022-07-21", "2022-07-22"), "EUR", "EGP")
+        initUI()
+
+        showLoading()
+        loadData(getLast3daysDates(), args.fromSymbol, args.toSymbol)
+
 
         return view
     }
@@ -32,6 +49,64 @@ class HistoricalDataFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun loadData(datesList: List<String>, from: String, to: String) {
+        viewModel.performNetworkCallsConcurrently(datesList, from, to)
+        viewModel.historicalUI.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is UiState.Loading -> showLoading()
+                is UiState.Success -> {
+                    hideLoading()
+                    populateHistoricalDataRV(response.data?.listOfHistoricalData)
+                }
+
+                is UiState.Error -> {
+                    hideLoading()
+                    context?.showGeneralDialog(
+                        title = getString(R.string.error),
+                        description = response.message.toString(),
+                        onClickListener = null
+                    )
+                }
+            }
+        }
+    }
+
+    private fun populateHistoricalDataRV(list: List<HistoricalDayUI>?) {
+        list?.let {
+            historicalDataAdapter.setData(it)
+            binding.rvHistoricalData.adapter = historicalDataAdapter
+        }
+    }
+
+    private fun initUI() {
+        binding.apply {
+            tvHeader.text = buildString {
+                append(getString(R.string.historical_data))
+                append("\n")
+                append(args.fromSymbol)
+                append(" -> ")
+                append(args.toSymbol)
+            }
+            swipeRefresh.setOnRefreshListener {
+                swipeRefresh.isRefreshing = true
+                loadData(getLast3daysDates(), args.fromSymbol, args.toSymbol)
+                swipeRefresh.isRefreshing = false
+            }
+        }
+    }
+
+    private fun showLoading() {
+        binding.apply {
+            progressBar.makeVisible()
+        }
+    }
+
+    private fun hideLoading() {
+        binding.apply {
+            progressBar.makeInVisible()
+        }
     }
 
 }

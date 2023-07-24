@@ -1,4 +1,4 @@
-package com.reem.currencyconverter.domain.entity.rates
+package com.reem.currencyconverter.domain.models.rates
 
 data class Rates(
     val AED: String?,

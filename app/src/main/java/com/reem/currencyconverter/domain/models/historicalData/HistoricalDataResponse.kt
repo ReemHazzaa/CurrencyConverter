@@ -1,7 +1,7 @@
-package com.reem.currencyconverter.domain.entity.historicalData
+package com.reem.currencyconverter.domain.models.historicalData
 
-import com.reem.currencyconverter.domain.entity.apiError.FixerApiError
-import com.reem.currencyconverter.domain.entity.rates.Rates
+import com.reem.currencyconverter.domain.models.apiError.FixerApiError
+import com.reem.currencyconverter.domain.models.rates.Rates
 
 data class HistoricalDataResponse(
     val base: String?,
