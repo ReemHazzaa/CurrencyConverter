@@ -6,7 +6,7 @@ import com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI
 class HistoricalDataDiffUtil(
     private val oldList: List<HistoricalDayUI>,
     private val newList: List<HistoricalDayUI>,
-): DiffUtil.Callback() {
+) : DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldList.size
 
     override fun getNewListSize(): Int = newList.size

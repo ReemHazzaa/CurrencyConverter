@@ -5,8 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.reem.currencyconverter.R
-import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.app.base.UiState
+import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.domain.models.rates.RatesResponse
 import com.reem.currencyconverter.domain.models.symbols.SymbolsResponse
 import com.reem.currencyconverter.domain.useCase.ratesUseCase.GetRatesUseCase
@@ -46,11 +46,12 @@ class ConvertCurrencyViewModel @Inject constructor(
                 ratesResponse.value = UiState.Error(e.message.toString())
             }
         } else {
-            ratesResponse.value = UiState.Error(application.getString(R.string.no_internet_connection))
+            ratesResponse.value =
+                UiState.Error(application.getString(R.string.no_internet_connection))
         }
     }
 
-    private fun handleRatesResponse(response: Response<RatesResponse>): UiState<RatesResponse>? {
+    private fun handleRatesResponse(response: Response<RatesResponse>): UiState<RatesResponse> {
         return when {
             !response.isSuccessful -> UiState.Error(application.getString(R.string.request_is_not_successful))
 

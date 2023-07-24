@@ -19,10 +19,8 @@ import com.reem.currencyconverter.app.extensions.showGeneralDialog
 import com.reem.currencyconverter.app.extensions.toast
 import com.reem.currencyconverter.app.extensions.updateText
 import com.reem.currencyconverter.data.mappers.convertCurrency
-import com.reem.currencyconverter.data.mappers.convertRatesObjectToUiList
 import com.reem.currencyconverter.data.mappers.mapSymbolsObjectToStringList
 import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
-import com.reem.currencyconverter.domain.models.rates.Rates
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

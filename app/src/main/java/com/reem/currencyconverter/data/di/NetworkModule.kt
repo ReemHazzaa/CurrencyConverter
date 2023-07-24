@@ -63,6 +63,7 @@ object NetworkModule {
                 else HttpLoggingInterceptor.Level.NONE
         }
     }
+
     @Singleton
     @Provides
     fun provideRequestInterceptor(): RequestInterceptor {

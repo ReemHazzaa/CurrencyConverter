@@ -1,7 +1,7 @@
 package com.reem.currencyconverter.app.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.reem.currencyconverter.R
 import dagger.hilt.android.AndroidEntryPoint
 

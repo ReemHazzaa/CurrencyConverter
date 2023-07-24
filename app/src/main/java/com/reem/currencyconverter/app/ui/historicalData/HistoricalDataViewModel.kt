@@ -102,7 +102,7 @@ class HistoricalDataViewModel @Inject constructor(
             (firstDayValue.code() == 200 && firstDayValue.body()?.success == false) ||
                     (secondDayValue.code() == 200 && secondDayValue.body()?.success == false) ||
                     (thirdDayValue.code() == 200 && thirdDayValue.body()?.success == false) ||
-                    (otherCurrencies.code() == 200 && otherCurrencies.body()?.success == false)-> {
+                    (otherCurrencies.code() == 200 && otherCurrencies.body()?.success == false) -> {
                 UiState.Error(
                     firstDayValue.body()?.error?.info
                         ?: secondDayValue.body()?.error?.info
@@ -119,7 +119,7 @@ class HistoricalDataViewModel @Inject constructor(
             (firstDayValue.code() == 200 && firstDayValue.body()?.success == true) &&
                     (secondDayValue.code() == 200 && secondDayValue.body()?.success == true) &&
                     (thirdDayValue.code() == 200 && thirdDayValue.body()?.success == true) &&
-                    (otherCurrencies.code() == 200 && otherCurrencies.body()?.success == true)-> {
+                    (otherCurrencies.code() == 200 && otherCurrencies.body()?.success == true) -> {
                 val uiResult = mapHistoricalApiResponsesToUI(
                     firstDayValue,
                     secondDayValue,
