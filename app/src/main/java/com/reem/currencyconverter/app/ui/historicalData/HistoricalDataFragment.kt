@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.reem.currencyconverter.R
 import com.reem.currencyconverter.app.adapters.historicalData.HistoricalDataAdapter
 import com.reem.currencyconverter.app.base.UiState
@@ -15,6 +16,7 @@ import com.reem.currencyconverter.app.extensions.makeVisible
 import com.reem.currencyconverter.app.extensions.showGeneralDialog
 import com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI
 import com.reem.currencyconverter.app.utils.getLast3daysDates
+import com.reem.currencyconverter.data.mappers.getConversionRateValue
 import com.reem.currencyconverter.databinding.FragmentHistoricalDataBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,6 +61,7 @@ class HistoricalDataFragment : Fragment() {
                 is UiState.Success -> {
                     hideLoading()
                     populateHistoricalDataRV(response.data?.listOfHistoricalData)
+                    populateChart(response.data?.listOfHistoricalData)
                 }
 
                 is UiState.Error -> {
@@ -78,6 +81,15 @@ class HistoricalDataFragment : Fragment() {
             historicalDataAdapter.setData(it)
             binding.rvHistoricalData.adapter = historicalDataAdapter
         }
+    }
+
+    private fun populateChart(list: List<HistoricalDayUI>?) {
+        val chartEntryModel = entryModelOf(
+            getConversionRateValue(list!![0].rates).toDouble(),
+            getConversionRateValue(list[1].rates).toDouble(),
+            getConversionRateValue(list[2].rates).toDouble()
+        )
+        binding.chartView.setModel(chartEntryModel)
     }
 
     private fun initUI() {
