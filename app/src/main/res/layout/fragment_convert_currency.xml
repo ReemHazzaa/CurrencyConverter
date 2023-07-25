@@ -136,9 +136,11 @@
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_weight="2"
-                        android:inputType="numberDecimal"
+                        android:enabled="false"
                         android:hint="@string/xxxx"
-                        android:textAlignment="center" />
+                        android:inputType="none"
+                        android:textAlignment="center"
+                        android:textColor="@color/black" />
 
                 </LinearLayout>
 
