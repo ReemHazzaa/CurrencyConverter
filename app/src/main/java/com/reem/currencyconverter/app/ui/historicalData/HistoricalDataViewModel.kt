@@ -15,6 +15,7 @@ import com.reem.currencyconverter.domain.useCase.historicalData.GetHistoricalUse
 import com.reem.currencyconverter.domain.useCase.ratesUseCase.GetRatesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import javax.inject.Inject
@@ -55,22 +56,25 @@ class HistoricalDataViewModel @Inject constructor(
 
             viewModelScope.launch {
                 try {
-                    val firstDayValue = firstDayDeferred.await()
-                    val secondDayValue = secondDayDeferred.await()
-                    val thirdDayValue = thirdDayDeferred.await()
-                    val otherCurrencies = otherCurrenciesDeferred.await()
+                    coroutineScope {
+                        val firstDayValue = firstDayDeferred.await()
+                        val secondDayValue = secondDayDeferred.await()
+                        val thirdDayValue = thirdDayDeferred.await()
+                        val otherCurrencies = otherCurrenciesDeferred.await()
 
-                    historicalUI.value =
-                        handleNetworkResponses(
-                            firstDayValue,
-                            secondDayValue,
-                            thirdDayValue,
-                            otherCurrencies
-                        )
+                        historicalUI.value =
+                            handleNetworkResponses(
+                                firstDayValue,
+                                secondDayValue,
+                                thirdDayValue,
+                                otherCurrencies
+                            )
+                    }
                 } catch (e: Exception) {
                     historicalUI.value =
                         UiState.Error(application.getString(R.string.request_is_not_successful))
                 }
+
             }
 
         } else {
