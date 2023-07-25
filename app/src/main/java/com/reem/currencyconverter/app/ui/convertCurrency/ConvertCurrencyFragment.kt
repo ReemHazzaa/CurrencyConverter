@@ -90,20 +90,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    private fun swapFromAndToFields() {
-        val from = binding.etFrom.text.toString()
-        val to = binding.etTo.text.toString()
-        if (from.isBlank() || to.isBlank()) {
-            this.requireActivity()
-                .toast(getString(R.string.from_to_fields_must_not_be_empty_for_swapping))
-        } else {
-            binding.apply {
-                etFrom.setText(to)
-                etTo.setText(from)
-            }
-        }
-    }
-
     private fun swapFromAndToSpinners() {
         if (selectedFromSymbol == selectedToSymbol) {
             this.requireActivity().toast(getString(R.string.same_symbols))
