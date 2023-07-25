@@ -60,8 +60,16 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun initUI() {
         binding.apply {
+            etFrom.afterTextChanged {
+                convertFromBaseToTargetCurrency(
+                    fromCurrency = selectedFromSymbol,
+                    toCurrency = selectedToSymbol,
+                    fromAmount = it,
+                    toEditText = binding.etTo
+                )
+            }
+            etFrom.setText(getString(R.string._1))
             ivSwap.setOnClickListener {
-//                swapFromAndToFields()
                 swapFromAndToSpinners()
             }
 
@@ -75,18 +83,6 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     isRefreshing = false
                 }
             }
-        }
-        setTextWatcher()
-    }
-
-    private fun setTextWatcher() {
-        binding.etFrom.afterTextChanged {
-            convertFromBaseToTargetCurrency(
-                fromCurrency = selectedFromSymbol,
-                toCurrency = selectedToSymbol,
-                fromAmount = it,
-                toEditText = binding.etTo
-            )
         }
     }
 
