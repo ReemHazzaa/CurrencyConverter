@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">CurrencyConverter</string>
 
-    <string name="all_you_need_for_currency_conversion">All you need for currency conversion</string>
     <string name="_1">1</string>
     <string name="xxxx">xxxx</string>
     <string name="details">Details</string>
@@ -21,4 +20,7 @@
     <string name="last_3_days_of_exchange_rates">Last 3 days of exchange rates</string>
     <string name="historical_data">Historical Data</string>
     <string name="other_10_popular_currencies">Other 10 popular currencies</string>
+    <string name="enter_amount">Enter Amount</string>
+    <string name="conversion">Conversion</string>
+    <string name="currency_converter">Currency Converter</string>
 </resources>
