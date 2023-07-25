@@ -37,24 +37,24 @@ class HistoricalDataViewModel @Inject constructor(
         historicalUI.value = UiState.Loading()
         if (networkManager.isNetworkAvailable()) {
 
-            try {
-                val firstDayDeferred = viewModelScope.async {
-                    getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[0], base, symbol))
-                }
+            val firstDayDeferred = viewModelScope.async {
+                getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[0], base, symbol))
+            }
 
-                val secondDayDeferred = viewModelScope.async {
-                    getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[1], base, symbol))
-                }
+            val secondDayDeferred = viewModelScope.async {
+                getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[1], base, symbol))
+            }
 
-                val thirdDayDeferred = viewModelScope.async {
-                    getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[2], base, symbol))
-                }
+            val thirdDayDeferred = viewModelScope.async {
+                getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[2], base, symbol))
+            }
 
-                val otherCurrenciesDeferred = viewModelScope.async {
-                    getRatesUseCase.execute(GetRatesUseCase.Params(base, otherCurrenciesSymbols))
-                }
+            val otherCurrenciesDeferred = viewModelScope.async {
+                getRatesUseCase.execute(GetRatesUseCase.Params(base, otherCurrenciesSymbols))
+            }
 
-                viewModelScope.launch {
+            viewModelScope.launch {
+                try {
                     val firstDayValue = firstDayDeferred.await()
                     val secondDayValue = secondDayDeferred.await()
                     val thirdDayValue = thirdDayDeferred.await()
@@ -67,10 +67,10 @@ class HistoricalDataViewModel @Inject constructor(
                             thirdDayValue,
                             otherCurrencies
                         )
+                } catch (e: Exception) {
+                    historicalUI.value =
+                        UiState.Error(application.getString(R.string.request_is_not_successful))
                 }
-            } catch (e: Exception) {
-                historicalUI.value =
-                    UiState.Error(application.getString(R.string.request_is_not_successful))
             }
 
         } else {
