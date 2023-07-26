@@ -11,15 +11,15 @@ import retrofit2.Response
 
 class FakeAppRepoImpl : AppRepo {
 
-    private var shouldReturnNetworkError: Boolean = false
+    private var shouldReturnApiError: Boolean = false
     private val fixerApiError = FixerApiError(
         101,
         "invalid_access_key",
         "You have not supplied a valid API Access Key. [Technical Support: support@apilayer.com]"
     )
 
-    fun setShouldReturnNetworkError(value: Boolean) {
-        shouldReturnNetworkError = value
+    fun setShouldReturnApiError(value: Boolean) {
+        shouldReturnApiError = value
     }
 
     override suspend fun getSymbols(): Response<SymbolsResponse> {
@@ -30,7 +30,7 @@ class FakeAppRepoImpl : AppRepo {
             symbols = null,
             error = fixerApiError
         )
-        return if (shouldReturnNetworkError) {
+        return if (shouldReturnApiError) {
             Response.success(200, errorResponse)
         } else {
             Response.success(200, successResponse)
@@ -58,7 +58,7 @@ class FakeAppRepoImpl : AppRepo {
             timestamp = null,
             error = fixerApiError
         )
-        return if (shouldReturnNetworkError) {
+        return if (shouldReturnApiError) {
             Response.success(200, errorResponse)
         } else {
             Response.success(200, successResponse)
@@ -88,7 +88,7 @@ class FakeAppRepoImpl : AppRepo {
             error = fixerApiError,
             historical = null
         )
-        return if (shouldReturnNetworkError) {
+        return if (shouldReturnApiError) {
             Response.success(200, errorResponse)
         } else {
             Response.success(200, successResponse)
