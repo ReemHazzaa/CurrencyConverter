@@ -21,6 +21,7 @@ import com.reem.currencyconverter.app.extensions.toast
 import com.reem.currencyconverter.app.extensions.updateText
 import com.reem.currencyconverter.data.mappers.convertCurrency
 import com.reem.currencyconverter.data.mappers.mapSymbolsObjectToStringList
+import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.databinding.FragmentConvertCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,12 +44,17 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var checkSpinnerFrom: Int = 0
     private var checkSpinnerTo: Int = 0
 
+    private lateinit var networkManager: NetworkManager
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentConvertCurrencyBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        networkManager = NetworkManager(this.requireContext())
+
         initUI()
 
         showLoading()
@@ -126,29 +132,45 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun getSymbols() {
-        viewModel.getSymbols()
-        viewModel.symbolsResponse.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is UiState.Success -> {
-                    hideLoading()
-                    response.data?.symbols?.let {
-                        mapSymbolsObjectToStringList(it)
-                    }.also {
-                        populateSpinnersWithSymbols(it)
+        if (networkManager.isNetworkAvailable()) {
+            viewModel.getSymbols()
+            viewModel.symbolsResponse.observe(viewLifecycleOwner) { response ->
+                when (response) {
+                    is UiState.Success -> {
+                        hideLoading()
+                        response.data?.symbols?.let {
+                            mapSymbolsObjectToStringList(it)
+                        }.also {
+                            populateSpinnersWithSymbols(it)
+                        }
                     }
-                }
 
-                is UiState.Error -> {
-                    hideLoading()
-                    context?.showGeneralDialog(
-                        title = getString(R.string.error),
-                        description = response.message.toString(),
-                        onClickListener = null
-                    )
-                }
+                    is UiState.Error -> {
+                        hideLoading()
 
-                is UiState.Loading -> showLoading()
+                        val errorMessage = when (response.errorType) {
+                            ErrorType.EXCEPTION -> response.message.toString()
+                            ErrorType.UNKNOWN -> getString(R.string.unidentified_error)
+                            ErrorType.API_ERROR -> getString(R.string.request_is_not_successful)
+                            ErrorType.API_ERROR_WITH_MESSAGE -> response.message.toString()
+                        }
+
+                        context?.showGeneralDialog(
+                            title = getString(R.string.error),
+                            description = errorMessage,
+                            onClickListener = null
+                        )
+                    }
+
+                    is UiState.Loading -> showLoading()
+                }
             }
+        } else {
+            context?.showGeneralDialog(
+                title = getString(R.string.error),
+                description = getString(R.string.no_internet_connection),
+                onClickListener = null
+            )
         }
     }
 
@@ -214,39 +236,46 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
         fromAmount: String,
         toEditText: EditText
     ) {
-        if (fromAmount.isNotBlank()) {
-            viewModel.getRates(fromCurrency, toCurrency)
-            viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
-                when (response) {
-                    is UiState.Success -> {
-                        hideLoading()
-                        response.data?.rates?.let {
-                            val toConvertedValue = convertCurrency(fromAmount, it)
-                            toEditText.updateText(toConvertedValue)
-                        }
-                    }
-
-                    is UiState.Error -> {
-                        hideLoading()
-
-                        val errorMessage = when (response.errorType) {
-                            ErrorType.NO_INTERNET -> getString(R.string.no_internet_connection)
-                            ErrorType.EXCEPTION -> response.message.toString()
-                            ErrorType.UNKNOWN -> getString(R.string.unidentified_error)
-                            ErrorType.API_ERROR -> getString(R.string.request_is_not_successful)
-                            ErrorType.API_ERROR_WITH_MESSAGE -> response.message.toString()
+        if (networkManager.isNetworkAvailable()) {
+            if (fromAmount.isNotBlank()) {
+                viewModel.getRates(fromCurrency, toCurrency)
+                viewModel.ratesResponse.observe(viewLifecycleOwner) { response ->
+                    when (response) {
+                        is UiState.Success -> {
+                            hideLoading()
+                            response.data?.rates?.let {
+                                val toConvertedValue = convertCurrency(fromAmount, it)
+                                toEditText.updateText(toConvertedValue)
+                            }
                         }
 
-                        context?.showGeneralDialog(
-                            title = getString(R.string.error),
-                            description = errorMessage,
-                            onClickListener = null
-                        )
-                    }
+                        is UiState.Error -> {
+                            hideLoading()
 
-                    is UiState.Loading -> showLoading()
+                            val errorMessage = when (response.errorType) {
+                                ErrorType.EXCEPTION -> response.message.toString()
+                                ErrorType.UNKNOWN -> getString(R.string.unidentified_error)
+                                ErrorType.API_ERROR -> getString(R.string.request_is_not_successful)
+                                ErrorType.API_ERROR_WITH_MESSAGE -> response.message.toString()
+                            }
+
+                            context?.showGeneralDialog(
+                                title = getString(R.string.error),
+                                description = errorMessage,
+                                onClickListener = null
+                            )
+                        }
+
+                        is UiState.Loading -> showLoading()
+                    }
                 }
             }
+        } else {
+            context?.showGeneralDialog(
+                title = getString(R.string.error),
+                description = getString(R.string.no_internet_connection),
+                onClickListener = null
+            )
         }
     }
 

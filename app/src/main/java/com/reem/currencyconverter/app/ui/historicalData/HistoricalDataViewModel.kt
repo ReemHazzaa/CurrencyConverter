@@ -8,7 +8,6 @@ import com.reem.currencyconverter.app.base.ErrorType
 import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.app.models.historicalData.HistoricalDataUI
 import com.reem.currencyconverter.data.mappers.mapHistoricalApiResponsesToUI
-import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.domain.models.historicalData.HistoricalDataResponse
 import com.reem.currencyconverter.domain.models.rates.RatesResponse
 import com.reem.currencyconverter.domain.useCase.historicalData.GetHistoricalUseCase
@@ -24,19 +23,17 @@ import javax.inject.Inject
 class HistoricalDataViewModel @Inject constructor(
     private val getHistoricalUC: GetHistoricalUseCase,
     private val getRatesUseCase: GetRatesUseCase,
-    private val networkManager: NetworkManager,
 ) : ViewModel() {
 
     private var _historicalUI: MutableLiveData<UiState<HistoricalDataUI>> = MutableLiveData()
     val historicalUI: LiveData<UiState<HistoricalDataUI>> = _historicalUI
-    fun performNetworkCallsConcurrently(
+    fun getHistoricalAndOtherCurrencies(
         datesList: List<String>,
         base: String,
         symbol: String,
         otherCurrenciesSymbols: String
     ) {
         _historicalUI.value = UiState.Loading()
-        if (networkManager.isNetworkAvailable()) {
 
             val firstDayDeferred = viewModelScope.async {
                 getHistoricalUC.execute(GetHistoricalUseCase.Params(datesList[0], base, symbol))
@@ -76,11 +73,6 @@ class HistoricalDataViewModel @Inject constructor(
                 }
 
             }
-
-        } else {
-            _historicalUI.value =
-                UiState.Error(ErrorType.NO_INTERNET)
-        }
     }
 
     private fun handleNetworkResponses(

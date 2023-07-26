@@ -7,7 +7,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class GetHistoricalUseCase @Inject constructor(private val appRepo: AppRepo) :
-    BaseUseCase<GetHistoricalUseCase.Params, Response<HistoricalDataResponse>>() {
+    BaseUseCase<GetHistoricalUseCase.Params, Response<HistoricalDataResponse>> {
 
     data class Params(
         val date: String,

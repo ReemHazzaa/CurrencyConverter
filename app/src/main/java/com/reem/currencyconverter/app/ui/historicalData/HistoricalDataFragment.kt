@@ -20,6 +20,7 @@ import com.reem.currencyconverter.app.models.historicalData.HistoricalDayUI
 import com.reem.currencyconverter.app.models.historicalData.RateUiItem
 import com.reem.currencyconverter.app.utils.getLast3daysDates
 import com.reem.currencyconverter.data.mappers.getConversionRateValue
+import com.reem.currencyconverter.data.remote.networkLayer.NetworkManager
 import com.reem.currencyconverter.databinding.FragmentHistoricalDataBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,12 +40,16 @@ class HistoricalDataFragment : Fragment() {
         OtherCurrenciesAdapter()
     }
 
+    private lateinit var networkManager: NetworkManager
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHistoricalDataBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        networkManager = NetworkManager(this.requireContext())
 
         initUI()
 
@@ -66,37 +71,44 @@ class HistoricalDataFragment : Fragment() {
         to: String,
         otherCurrencies: String
     ) {
-        viewModel.performNetworkCallsConcurrently(datesList, from, to, otherCurrencies)
-        viewModel.historicalUI.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is UiState.Loading -> showLoading()
-                is UiState.Success -> {
-                    hideLoading()
-                    populateHistoricalDataRV(response.data?.listOfHistoricalData)
-                    populateChart(response.data?.listOfHistoricalData)
-                    if (response.data?.otherCurrencies?.isNotEmpty() == true) {
-                        populateCurrenciesRV(response.data.otherCurrencies)
-                    }
-                }
-
-                is UiState.Error -> {
-                    hideLoading()
-
-                    val errorMessage = when (response.errorType) {
-                        ErrorType.NO_INTERNET -> getString(R.string.no_internet_connection)
-                        ErrorType.EXCEPTION -> response.message.toString()
-                        ErrorType.UNKNOWN -> getString(R.string.unidentified_error)
-                        ErrorType.API_ERROR -> getString(R.string.request_is_not_successful)
-                        ErrorType.API_ERROR_WITH_MESSAGE -> response.message.toString()
+        if (networkManager.isNetworkAvailable()) {
+            viewModel.getHistoricalAndOtherCurrencies(datesList, from, to, otherCurrencies)
+            viewModel.historicalUI.observe(viewLifecycleOwner) { response ->
+                when (response) {
+                    is UiState.Loading -> showLoading()
+                    is UiState.Success -> {
+                        hideLoading()
+                        populateHistoricalDataRV(response.data?.listOfHistoricalData)
+                        populateChart(response.data?.listOfHistoricalData)
+                        if (response.data?.otherCurrencies?.isNotEmpty() == true) {
+                            populateCurrenciesRV(response.data.otherCurrencies)
+                        }
                     }
 
-                    context?.showGeneralDialog(
-                        title = getString(R.string.error),
-                        description = errorMessage,
-                        onClickListener = null
-                    )
+                    is UiState.Error -> {
+                        hideLoading()
+
+                        val errorMessage = when (response.errorType) {
+                            ErrorType.EXCEPTION -> response.message.toString()
+                            ErrorType.UNKNOWN -> getString(R.string.unidentified_error)
+                            ErrorType.API_ERROR -> getString(R.string.request_is_not_successful)
+                            ErrorType.API_ERROR_WITH_MESSAGE -> response.message.toString()
+                        }
+
+                        context?.showGeneralDialog(
+                            title = getString(R.string.error),
+                            description = errorMessage,
+                            onClickListener = null
+                        )
+                    }
                 }
             }
+        } else {
+            context?.showGeneralDialog(
+                title = getString(R.string.error),
+                description = getString(R.string.no_internet_connection),
+                onClickListener = null
+            )
         }
     }
 

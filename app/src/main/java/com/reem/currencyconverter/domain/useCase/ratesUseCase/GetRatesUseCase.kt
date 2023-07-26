@@ -7,7 +7,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class GetRatesUseCase @Inject constructor(private val appRepo: AppRepo) :
-    BaseUseCase<GetRatesUseCase.Params, Response<RatesResponse>>() {
+    BaseUseCase<GetRatesUseCase.Params, Response<RatesResponse>> {
 
     data class Params(
         val base: String,

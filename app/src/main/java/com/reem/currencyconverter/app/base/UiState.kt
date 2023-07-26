@@ -13,7 +13,6 @@ sealed class UiState<T>(
 }
 
 enum class ErrorType{
-    NO_INTERNET,
     API_ERROR,
     API_ERROR_WITH_MESSAGE,
     EXCEPTION,

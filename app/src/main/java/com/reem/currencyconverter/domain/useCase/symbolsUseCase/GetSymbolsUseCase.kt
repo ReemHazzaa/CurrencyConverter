@@ -7,7 +7,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class GetSymbolsUseCase @Inject constructor(private val appRepo: AppRepo) :
-    BaseUseCase<Any, Response<SymbolsResponse>>() {
+    BaseUseCase<Any, Response<SymbolsResponse>> {
     override suspend fun execute(params: Any?): Response<SymbolsResponse> {
         return appRepo.getSymbols()
     }
