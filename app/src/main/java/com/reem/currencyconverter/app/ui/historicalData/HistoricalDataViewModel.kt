@@ -1,5 +1,6 @@
 package com.reem.currencyconverter.app.ui.historicalData
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,14 +27,15 @@ class HistoricalDataViewModel @Inject constructor(
     private val networkManager: NetworkManager,
 ) : ViewModel() {
 
-    var historicalUI: MutableLiveData<UiState<HistoricalDataUI>> = MutableLiveData()
+    private var _historicalUI: MutableLiveData<UiState<HistoricalDataUI>> = MutableLiveData()
+    val historicalUI: LiveData<UiState<HistoricalDataUI>> = _historicalUI
     fun performNetworkCallsConcurrently(
         datesList: List<String>,
         base: String,
         symbol: String,
         otherCurrenciesSymbols: String
     ) {
-        historicalUI.value = UiState.Loading()
+        _historicalUI.value = UiState.Loading()
         if (networkManager.isNetworkAvailable()) {
 
             val firstDayDeferred = viewModelScope.async {
@@ -60,7 +62,7 @@ class HistoricalDataViewModel @Inject constructor(
                         val thirdDayValue = thirdDayDeferred.await()
                         val otherCurrencies = otherCurrenciesDeferred.await()
 
-                        historicalUI.value =
+                        _historicalUI.value =
                             handleNetworkResponses(
                                 firstDayValue,
                                 secondDayValue,
@@ -69,14 +71,14 @@ class HistoricalDataViewModel @Inject constructor(
                             )
                     }
                 } catch (e: Exception) {
-                    historicalUI.value =
+                    _historicalUI.value =
                         UiState.Error(ErrorType.EXCEPTION, e.message.toString())
                 }
 
             }
 
         } else {
-            historicalUI.value =
+            _historicalUI.value =
                 UiState.Error(ErrorType.NO_INTERNET)
         }
     }
