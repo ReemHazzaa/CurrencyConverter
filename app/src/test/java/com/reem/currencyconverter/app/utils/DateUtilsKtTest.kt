@@ -1,7 +1,12 @@
 package com.reem.currencyconverter.app.utils
 
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class DateUtilsKtTest {
 
@@ -30,7 +35,7 @@ class DateUtilsKtTest {
     fun getCalculatedDate_validDateFormatAndNegativeDaysValue_success() {
         val noOfDaysBefore = -1
         val dateFormat = "yyyy-MM-dd"
-        val yesterday = "2023-07-24"
+        val yesterday = getCalculatedDate( -1)
 
         Assert.assertEquals(
             getCalculatedDate(dateFormat, noOfDaysBefore),
@@ -42,7 +47,7 @@ class DateUtilsKtTest {
     fun getCalculatedDate_validDateFormatAndPositiveDaysValue_success() {
         val noOfDaysAfter = 1
         val dateFormat = "yyyy-MM-dd"
-        val tomorrow = "2023-07-26"
+        val tomorrow = getCalculatedDate( 1)
 
         Assert.assertEquals(
             getCalculatedDate(dateFormat, noOfDaysAfter),
@@ -62,8 +67,15 @@ class DateUtilsKtTest {
 
     @Test
     fun getLast3daysDates_success() {
-        val expected = listOf("2023-07-24", "2023-07-23", "2023-07-22")
+        val expected = listOf(getCalculatedDate(-1), getCalculatedDate(-2), getCalculatedDate(-3))
         Assert.assertEquals(expected, getLast3daysDates())
+    }
+
+    private fun getCalculatedDate( days: Int): String? {
+        val cal: Calendar = Calendar.getInstance()
+        val s = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+        cal.add(Calendar.DAY_OF_YEAR, days)
+        return s.format(Date(cal.timeInMillis))
     }
 
 }
