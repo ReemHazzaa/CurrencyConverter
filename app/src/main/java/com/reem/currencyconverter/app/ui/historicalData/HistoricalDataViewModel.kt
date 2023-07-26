@@ -1,10 +1,10 @@
 package com.reem.currencyconverter.app.ui.historicalData
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.reem.currencyconverter.R
+import com.reem.currencyconverter.app.base.ErrorType
 import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.app.models.historicalData.HistoricalDataUI
 import com.reem.currencyconverter.data.mappers.mapHistoricalApiResponsesToUI
@@ -25,17 +25,17 @@ class HistoricalDataViewModel @Inject constructor(
     private val getHistoricalUC: GetHistoricalUseCase,
     private val getRatesUseCase: GetRatesUseCase,
     private val networkManager: NetworkManager,
-    private val application: Application
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    var historicalUI: MutableLiveData<UiState<HistoricalDataUI>> = MutableLiveData()
+    private var _historicalUI: MutableLiveData<UiState<HistoricalDataUI>> = MutableLiveData()
+    val historicalUI: LiveData<UiState<HistoricalDataUI>> = _historicalUI
     fun performNetworkCallsConcurrently(
         datesList: List<String>,
         base: String,
         symbol: String,
         otherCurrenciesSymbols: String
     ) {
-        historicalUI.value = UiState.Loading()
+        _historicalUI.value = UiState.Loading()
         if (networkManager.isNetworkAvailable()) {
 
             val firstDayDeferred = viewModelScope.async {
@@ -62,7 +62,7 @@ class HistoricalDataViewModel @Inject constructor(
                         val thirdDayValue = thirdDayDeferred.await()
                         val otherCurrencies = otherCurrenciesDeferred.await()
 
-                        historicalUI.value =
+                        _historicalUI.value =
                             handleNetworkResponses(
                                 firstDayValue,
                                 secondDayValue,
@@ -71,15 +71,15 @@ class HistoricalDataViewModel @Inject constructor(
                             )
                     }
                 } catch (e: Exception) {
-                    historicalUI.value =
-                        UiState.Error(application.getString(R.string.request_is_not_successful))
+                    _historicalUI.value =
+                        UiState.Error(ErrorType.EXCEPTION, e.message.toString())
                 }
 
             }
 
         } else {
-            historicalUI.value =
-                UiState.Error(application.getString(R.string.no_internet_connection))
+            _historicalUI.value =
+                UiState.Error(ErrorType.NO_INTERNET)
         }
     }
 
@@ -94,20 +94,21 @@ class HistoricalDataViewModel @Inject constructor(
                     !secondDayValue.isSuccessful ||
                     !thirdDayValue.isSuccessful ||
                     !otherCurrencies.isSuccessful ->
-                UiState.Error(application.getString(R.string.request_is_not_successful))
+                UiState.Error(ErrorType.API_ERROR)
 
 
             firstDayValue.code() != 200 ||
                     secondDayValue.code() != 200 ||
                     thirdDayValue.code() != 200 ||
                     otherCurrencies.code() != 200 ->
-                UiState.Error(application.getString(R.string.request_is_not_successful))
+                UiState.Error(ErrorType.API_ERROR)
 
             (firstDayValue.code() == 200 && firstDayValue.body()?.success == false) ||
                     (secondDayValue.code() == 200 && secondDayValue.body()?.success == false) ||
                     (thirdDayValue.code() == 200 && thirdDayValue.body()?.success == false) ||
                     (otherCurrencies.code() == 200 && otherCurrencies.body()?.success == false) -> {
                 UiState.Error(
+                    ErrorType.API_ERROR_WITH_MESSAGE,
                     firstDayValue.body()?.error?.info
                         ?: secondDayValue.body()?.error?.info
                         ?: thirdDayValue.body()?.error?.info
@@ -116,7 +117,6 @@ class HistoricalDataViewModel @Inject constructor(
                         ?: secondDayValue.body()?.error?.type?.replace("_", " ")
                         ?: thirdDayValue.body()?.error?.type?.replace("_", " ")
                         ?: otherCurrencies.body()?.error?.type?.replace("_", " ")
-                        ?: application.getString(R.string.unidentified_error)
                 )
             }
 
@@ -134,7 +134,7 @@ class HistoricalDataViewModel @Inject constructor(
                 return UiState.Success(uiResult)
             }
 
-            else -> UiState.Error(application.getString(R.string.unidentified_error))
+            else -> UiState.Error(ErrorType.UNKNOWN)
         }
     }
 }
