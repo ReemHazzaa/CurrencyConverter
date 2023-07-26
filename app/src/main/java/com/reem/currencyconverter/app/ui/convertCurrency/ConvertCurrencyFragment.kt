@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.reem.currencyconverter.R
+import com.reem.currencyconverter.app.base.ErrorType
 import com.reem.currencyconverter.app.base.UiState
 import com.reem.currencyconverter.app.extensions.afterTextChanged
 import com.reem.currencyconverter.app.extensions.makeInVisible
@@ -227,9 +228,18 @@ class ConvertCurrencyFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
                     is UiState.Error -> {
                         hideLoading()
+
+                        val errorMessage = when (response.errorType) {
+                            ErrorType.NO_INTERNET -> getString(R.string.no_internet_connection)
+                            ErrorType.EXCEPTION -> response.message.toString()
+                            ErrorType.UNKNOWN -> getString(R.string.unidentified_error)
+                            ErrorType.API_ERROR -> getString(R.string.request_is_not_successful)
+                            ErrorType.API_ERROR_WITH_MESSAGE -> response.message.toString()
+                        }
+
                         context?.showGeneralDialog(
                             title = getString(R.string.error),
-                            description = response.message.toString(),
+                            description = errorMessage,
                             onClickListener = null
                         )
                     }
